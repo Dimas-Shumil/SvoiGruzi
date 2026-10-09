@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#12181b" />
+    <meta
+      name="description"
+      content="Грузоперевозки по Абакану и Хакасии. Перевозим мебель, технику, вещи и другие грузы. Стоимость согласовываем до поездки."
+    />
+    <title>Грузоперевозки по Абакану и Хакасии</title>
+    <link
+      rel="preload"
+      href="site/img/hero-back.webp"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <link rel="stylesheet" href="site/css/main.css" />
+  </head>
+  <body>
+    <site-header></site-header>
+    <main class="main" id="main">
+      <!-- HERO -->
+      <section class="hero" id="home" aria-labelledby="hero-title">
+        <div class="hero__media" aria-hidden="true"></div>
+        <div class="hero__overlay" aria-hidden="true"></div>
+
+        <div class="hero__container container">
+          <div class="hero__content">
+            <p class="hero__eyebrow">
+              Грузоперевозки в Республике Хакасия
+            </p>
+
+            <h1 class="hero__title" id="hero-title">
+              <span>Грузоперевозки</span>
+              <span>по Абакану</span>
+              <span>и Хакасии</span>
+            </h1>
+
+            <p class="hero__description">
+              Перевозим мебель, технику, вещи и другие грузы.
+              Бережно, аккуратно и по согласованной стоимости.
+            </p>
+
+            <div class="hero__actions">
+              <a class="hero__button hero__button--primary" href="#prices">
+                Рассчитать перевозку
+              </a>
+              <a class="hero__button hero__button--outline" href="#services">
+                Наши услуги
+              </a>
+            </div>
+          </div>
+
+          <ul class="hero__features" aria-label="Преимущества перевозок">
+            <li class="hero__feature">
+              <span class="hero__feature-number">01</span>
+              <span class="hero__feature-label">Абакан и Хакасия</span>
+            </li>
+            <li class="hero__feature">
+              <span class="hero__feature-number">02</span>
+              <span class="hero__feature-label">Бережная перевозка</span>
+            </li>
+            <li class="hero__feature">
+              <span class="hero__feature-number">03</span>
+              <span class="hero__feature-label">Стоимость до поездки</span>
+            </li>
+          </ul>
+
+          <a class="hero__scroll" href="#services" aria-label="Перейти к описанию наших услуг">
+            <span class="hero__scroll-text">Листайте вниз</span>
+            <span class="hero__scroll-indicator" aria-hidden="true"></span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ВТОРОЙ КАДР: услуги / подход -->
+      <section class="story" id="services" aria-labelledby="story-title">
+        <div class="story__media" aria-hidden="true"></div>
+
+        <div class="story__container container">
+          <div class="story__column story__column--left">
+            <p class="story__eyebrow" data-reveal>Наши услуги</p>
+            <h2 class="story__title" id="story-title" data-reveal>
+              Перевозим<br />то, что важно
+            </h2>
+            <p class="story__description" data-reveal>
+              Мебель, бытовую технику, личные вещи и другие грузы —
+              для дома и бизнеса по Абакану и Хакасии.
+            </p>
+            <span class="story__footnote" data-reveal>Для дома и бизнеса</span>
+          </div>
+
+          <div class="story__column story__column--right">
+            <p class="story__eyebrow" data-reveal>Наш подход</p>
+            <h3 class="story__title story__title--right" data-reveal>
+              Бережно.<br />В срок.<br />Без лишней суеты.
+            </h3>
+            <p class="story__description" data-reveal>
+              Согласуем детали заранее, подберём подходящую машину
+              и аккуратно доставим ваш груз.
+            </p>
+            <span class="story__footnote" data-reveal>Каждая деталь имеет значение</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- СТОИМОСТЬ ПЕРЕВОЗКИ -->
+      <section class="prices" id="prices" aria-labelledby="prices-title">
+        <div class="prices__media" aria-hidden="true"></div>
+        <div class="prices__container container">
+          <div class="prices__content">
+            <p class="prices__eyebrow" data-reveal>Тарифы на перевозку</p>
+            <h2 class="prices__title" id="prices-title" data-reveal>
+              Понятная стоимость<br />до поездки
+            </h2>
+
+            <dl class="prices__list" aria-label="Ориентировочные тарифы">
+              <div class="prices__item" data-reveal>
+                <dt class="prices__name">Подача машины</dt>
+                <dd class="prices__value">от 1 800 ₽</dd>
+              </div>
+              <div class="prices__item" data-reveal>
+                <dt class="prices__name">Километраж</dt>
+                <dd class="prices__value">от 35 ₽/км</dd>
+              </div>
+              <div class="prices__item" data-reveal>
+                <dt class="prices__name">Грузчики</dt>
+                <dd class="prices__value">от 500 ₽/час</dd>
+              </div>
+            </dl>
+
+            <p class="prices__note" data-reveal>
+              Итоговую стоимость согласуем заранее. Цена зависит от маршрута,
+              объёма груза и необходимых дополнительных услуг.
+            </p>
+
+            <div class="prices__cta-wrap" data-reveal>
+              <a class="prices__cta" href="#contacts">
+                Обсудить перевозку
+              </a>
+            </div>
+            <p class="prices__hint" data-reveal>Точные тарифы уточняются при оформлении заявки</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <site-footer></site-footer>
+    <script src="site/scripts/components.js" defer></script>
+    <script src="site/scripts/main.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+// ============================================================
+// FOOTER — стандартный компактный подвал сайта.
+// HTML: /components/footer.html. Подключение: @use "./footer";
+// ============================================================
+$footer-bg: #171e21;
+$footer-text: #f8f8f6;
+$footer-muted: rgba(248, 248, 246, 0.62);
+$footer-accent: #c6b28e;
+$footer-line: rgba(255, 255, 255, 0.13);
+$footer-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+site-footer {
+  display: block;
+}
+
+.site-footer {
+  background: $footer-bg;
+  border-top: 1px solid $footer-line;
+  color: $footer-text;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(160px, 0.7fr) minmax(230px, 1fr);
+    gap: clamp(35px, 6vw, 100px);
+    padding-top: clamp(55px, 5vw, 76px);
+    padding-bottom: clamp(53px, 5vw, 69px);
+  }
+
+  &__about,
+  &__nav,
+  &__contacts {
+    min-width: 0;
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: clamp(25px, 2.4vw, 34px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.07em;
+    white-space: nowrap;
+    transition: opacity 0.5s $footer-ease;
+
+    &:hover { opacity: 0.8; }
+    > span:first-child { color: $footer-accent; }
+  }
+
+  &__brand-dot {
+    color: $footer-text;
+  }
+
+  &__description {
+    max-width: 330px;
+    margin-top: 19px;
+    color: $footer-muted;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.8;
+  }
+
+  &__heading {
+    margin-bottom: 23px;
+    color: $footer-text;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  &__list {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+      color: $footer-muted;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      transition: color 0.5s $footer-ease;
+
+      &:hover { color: $footer-text; }
+    }
+  }
+
+  &__place {
+    color: $footer-text;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.6;
+  }
+
+  &__notice {
+    max-width: 260px;
+    margin-top: 10px;
+    color: $footer-muted;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  // Кнопка локальна для футера, без общего файла buttons.scss.
+  // Hover-поведение такое же, как у кнопок Hero.
+  &__cta {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 22px;
+    padding: 11px 18px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #27343d;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.25;
+    text-align: center;
+    transition:
+      transform 0.65s $footer-ease,
+      background-color 0.65s $footer-ease,
+      box-shadow 0.65s $footer-ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      background: #e7eae9;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.11);
+    }
+
+    &:active { transform: translateY(-1px); }
+  }
+
+  &__bottom {
+    display: flex;
+    min-height: 77px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid $footer-line;
+    color: $footer-muted;
+  }
+
+  &__bottom small {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  &__to-top {
+    flex: 0 0 auto;
+    color: $footer-muted;
+    font-size: 12px;
+    font-weight: 650;
+    transition: color 0.5s $footer-ease;
+
+    &:hover { color: $footer-text; }
+  }
+}
+
+@media (max-width: 1024px) {
+  .site-footer {
+    &__grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(140px, 0.8fr) minmax(200px, 1fr);
+      gap: 25px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .site-footer {
+    &__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 38px 24px;
+      padding-top: 49px;
+      padding-bottom: 45px;
+    }
+
+    &__about { grid-column: 1 / -1; }
+    &__brand { font-size: 30px; }
+    &__description { max-width: 340px; margin-top: 13px; }
+    &__heading { margin-bottom: 18px; }
+    &__list { gap: 12px; }
+    &__cta { min-height: 45px; padding: 10px 13px; font-size: 11px; }
+    &__bottom { min-height: 75px; }
+  }
+}
+
+@media (max-width: 359px) {
+  .site-footer {
+    &__grid { gap: 35px 15px; }
+    &__cta { padding-inline: 10px; }
+    &__bottom small { font-size: 10px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer {
+    &__brand,
+    &__list a,
+    &__cta,
+    &__to-top { transition: none; }
+  }
+}

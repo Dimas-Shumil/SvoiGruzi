@@ -1,0 +1,44 @@
+<!-- Разметка хедера. Подключается один раз через <site-header> в index.html. -->
+<header class="site-header" data-site-header>
+  <div class="site-header__inner container">
+    <a class="site-header__brand" href="#home" aria-label="Свои грузы — на главную">
+      <span class="site-header__symbol" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="site-header__brand-text"><strong>СВОИ<span>ГРУЗЫ</span></strong><small>ГРУЗОПЕРЕВОЗКИ</small></span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Основная навигация">
+      <a href="#home">Главная</a>
+      <a href="#services">Услуги</a>
+      <a href="#prices">Тарифы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <span class="site-header__location">Абакан · Хакасия</span>
+      <a class="site-header__cta" href="#prices">Узнать стоимость</a>
+    </div>
+
+    <button class="site-header__burger" type="button" aria-expanded="false"
+            aria-controls="site-mobile-navigation" aria-label="Открыть меню">
+      <span class="site-header__burger-word">Меню</span>
+      <span class="site-header__burger-icon" aria-hidden="true"><span></span><span></span></span>
+    </button>
+  </div>
+
+  <nav class="site-header__mobile" id="site-mobile-navigation"
+       aria-label="Мобильная навигация" aria-hidden="true" inert>
+    <div class="site-header__mobile-inner container">
+      <div class="site-header__mobile-kicker">Навигация / Свои грузы</div>
+      <div class="site-header__mobile-links">
+        <a href="#home"><span>01</span>Главная</a>
+        <a href="#services"><span>02</span>Услуги</a>
+        <a href="#prices"><span>03</span>Тарифы</a>
+        <a href="#contacts"><span>04</span>Контакты</a>
+      </div>
+      <div class="site-header__mobile-bottom">
+        <p>Перевозки по Абакану и Республике Хакасия</p>
+        <a class="site-header__mobile-cta" href="#prices">Узнать стоимость</a>
+      </div>
+    </div>
+  </nav>
+</header>
