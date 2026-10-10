@@ -85,6 +85,10 @@ site-footer {
     }
   }
 
+  &__list a[aria-current="page"] {
+    color: $footer-text;
+  }
+
   &__place {
     color: $footer-text;
     font-size: 13px;

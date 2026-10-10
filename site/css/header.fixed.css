@@ -138,6 +138,14 @@ site-header {
   transform: scaleX(1);
 }
 
+.site-header__nav a[aria-current=page] {
+  color: #ffffff;
+}
+
+.site-header__nav a[aria-current=page]::after {
+  transform: scaleX(1);
+}
+
 .site-header__actions {
   display: flex;
   flex: 0 0 auto;
@@ -313,6 +321,9 @@ site-header {
   }
   .site-header__mobile-links a:hover {
     padding-left: 9px;
+    color: #c6b28e;
+  }
+  .site-header__mobile-links a[aria-current=page] {
     color: #c6b28e;
   }
   .site-header__mobile-links a span {

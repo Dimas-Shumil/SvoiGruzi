@@ -138,6 +138,14 @@ site-header {
   transform: scaleX(1);
 }
 
+.site-header__nav a[aria-current=page] {
+  color: #ffffff;
+}
+
+.site-header__nav a[aria-current=page]::after {
+  transform: scaleX(1);
+}
+
 .site-header__actions {
   display: flex;
   flex: 0 0 auto;
@@ -313,6 +321,9 @@ site-header {
   }
   .site-header__mobile-links a:hover {
     padding-left: 9px;
+    color: #c6b28e;
+  }
+  .site-header__mobile-links a[aria-current=page] {
     color: #c6b28e;
   }
   .site-header__mobile-links a span {
@@ -492,6 +503,9 @@ site-footer {
   transition: color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .site-footer__list a:hover {
+  color: #f8f8f6;
+}
+.site-footer__list a[aria-current=page] {
   color: #f8f8f6;
 }
 .site-footer__place {

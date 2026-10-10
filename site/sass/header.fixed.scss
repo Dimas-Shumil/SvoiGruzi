@@ -143,6 +143,13 @@ site-header {
   transform: scaleX(1);
 }
 
+.site-header__nav a[aria-current="page"] {
+  color: $header-text;
+}
+.site-header__nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
 .site-header__actions {
   display: flex;
   flex: 0 0 auto;
@@ -333,6 +340,9 @@ site-header {
   }
   .site-header__mobile-links a:hover {
     padding-left: 9px;
+    color: $header-accent;
+  }
+  .site-header__mobile-links a[aria-current="page"] {
     color: $header-accent;
   }
   .site-header__mobile-links a span {

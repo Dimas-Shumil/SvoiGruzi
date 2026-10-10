@@ -68,6 +68,9 @@ site-footer {
 .site-footer__list a:hover {
   color: #f8f8f6;
 }
+.site-footer__list a[aria-current=page] {
+  color: #f8f8f6;
+}
 .site-footer__place {
   color: #f8f8f6;
   font-size: 13px;

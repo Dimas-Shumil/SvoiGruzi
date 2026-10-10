@@ -1,0 +1,783 @@
+// ============================================================
+// СВОИ ГРУЗЫ — АВТОПАРК
+// Отдельная страница. База, header и footer наследуются из main.
+// Компилируется в site/css/autopark.css.
+// ============================================================
+
+@use "./main";
+
+$fleet-dark: main.$dark;
+$fleet-dark-2: main.$dark-2;
+$fleet-light: #f4f3ef;
+$fleet-card: #fbfaf7;
+$fleet-text: main.$text-dark;
+$fleet-muted: main.$muted-dark;
+$fleet-white: main.$white;
+$fleet-radius: main.$radius-sm;
+$fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+.page-autopark {
+  background: $fleet-light;
+  color: $fleet-text;
+}
+
+.autopark-main {
+  overflow: clip;
+}
+
+// ------------------------------------------------------------
+// HERO
+// ------------------------------------------------------------
+.autopark-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100svh;
+  background: $fleet-dark;
+  color: $fleet-white;
+
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    z-index: 1;
+    height: clamp(90px, 13vh, 150px);
+    background: linear-gradient(180deg, rgba(18, 24, 27, 0), $fleet-dark 100%);
+    content: "";
+    pointer-events: none;
+  }
+}
+
+.autopark-hero__media {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: -2;
+  width: min(64vw, 1180px);
+  overflow: hidden;
+}
+
+.autopark-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 48% 62%;
+  filter: saturate(0.82) brightness(0.82);
+  transform: scale(1.055);
+  animation: fleet-camera 2.5s $fleet-ease both;
+}
+
+.autopark-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(8, 13, 16, 0.12) 0%, rgba(8, 13, 16, 0.16) 35%, rgba(18, 24, 27, 0.82) 61%, $fleet-dark 80%),
+    linear-gradient(180deg, rgba(8, 13, 16, 0.44) 0%, rgba(8, 13, 16, 0.03) 30%, rgba(8, 13, 16, 0.1) 68%, rgba(18, 24, 27, 0.87) 100%);
+  pointer-events: none;
+}
+
+.autopark-hero__container {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 100svh;
+  grid-template-columns: minmax(0, 1.05fr) minmax(520px, 0.95fr);
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  gap: 52px;
+  padding-top: clamp(128px, 15vh, 190px);
+  padding-bottom: 46px;
+}
+
+.autopark-hero__content {
+  grid-column: 2;
+  align-self: center;
+  width: min(100%, 700px);
+  justify-self: end;
+}
+
+.autopark-hero__eyebrow {
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.autopark-hero__title {
+  color: $fleet-white;
+  font-size: clamp(55px, 5vw, 86px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+
+.autopark-hero__description {
+  max-width: 590px;
+  margin-top: 25px;
+  color: rgba(255, 255, 255, 0.87);
+  font-size: clamp(14px, 1.05vw, 17px);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.autopark-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.autopark-hero__button,
+.fleet-card__button,
+.fleet-partner__button {
+  display: inline-flex;
+  min-height: 53px;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border: 1px solid transparent;
+  border-radius: $fleet-radius;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  transition:
+    transform 0.65s $fleet-ease,
+    background-color 0.65s $fleet-ease,
+    border-color 0.65s $fleet-ease,
+    box-shadow 0.65s $fleet-ease;
+
+  &:hover { transform: translateY(-3px); }
+  &:active { transform: translateY(-1px); }
+}
+
+.autopark-hero__button--primary {
+  background: $fleet-white;
+  color: #27343d;
+
+  &:hover {
+    background: #e7eae9;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.11);
+  }
+}
+
+.autopark-hero__button--outline {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(15, 21, 25, 0.16);
+  color: $fleet-white;
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    border-color: $fleet-white;
+    background: rgba(255, 255, 255, 0.13);
+  }
+}
+
+// Преимущества Hero полностью повторяют геометрию главной.
+.autopark-hero__features {
+  display: grid;
+  width: min(690px, 100%);
+  grid-column: 2;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-self: end;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.autopark-hero__feature {
+  display: flex;
+  min-height: 55px;
+  align-items: center;
+  gap: 13px;
+  padding-inline: 21px;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+
+  &:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+.autopark-hero__feature-number {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.autopark-hero__feature-label {
+  max-width: 145px;
+  color: $fleet-white;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+// ------------------------------------------------------------
+// КАТАЛОГ
+// ------------------------------------------------------------
+.fleet-catalog {
+  position: relative;
+  background: $fleet-light;
+  padding-block: clamp(86px, 8vw, 138px);
+}
+
+.fleet-catalog__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.72fr);
+  align-items: end;
+  gap: clamp(42px, 8vw, 140px);
+}
+
+.fleet-catalog__eyebrow,
+.fleet-partner__eyebrow {
+  margin-bottom: 18px;
+  color: #747977;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.fleet-catalog__title,
+.fleet-partner__title {
+  color: $fleet-text;
+  font-size: clamp(46px, 4.8vw, 78px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.fleet-catalog__intro {
+  max-width: 520px;
+  padding-bottom: 5px;
+  color: $fleet-muted;
+  font-size: clamp(14px, 1.05vw, 17px);
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.fleet-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 42px;
+}
+
+.fleet-filters__button {
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid rgba(23, 28, 30, 0.11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #4d5558;
+  font-size: 12px;
+  font-weight: 700;
+  transition:
+    color 0.45s $fleet-ease,
+    background-color 0.45s $fleet-ease,
+    border-color 0.45s $fleet-ease,
+    transform 0.45s $fleet-ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(23, 28, 30, 0.2);
+  }
+
+  &.is-active {
+    border-color: $fleet-dark;
+    background: $fleet-dark;
+    color: $fleet-white;
+  }
+}
+
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.fleet-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid rgba(23, 28, 30, 0.08);
+  border-radius: main.$radius-md;
+  background: $fleet-card;
+  box-shadow: 0 15px 45px rgba(21, 27, 29, 0.05);
+  overflow: hidden;
+  transition:
+    transform 0.6s $fleet-ease,
+    box-shadow 0.6s $fleet-ease,
+    opacity 0.35s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 24px 60px rgba(21, 27, 29, 0.09);
+  }
+
+  &.is-filtered-out {
+    display: none;
+  }
+}
+
+.fleet-card__media {
+  position: relative;
+  aspect-ratio: 1.35 / 1;
+  margin: 9px 9px 0;
+  border-radius: $fleet-radius;
+  background: #e7e4dd;
+  overflow: hidden;
+}
+
+.fleet-card__media::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 65%, rgba(18, 24, 27, 0.06));
+  content: "";
+  pointer-events: none;
+}
+
+.fleet-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.9s $fleet-ease;
+}
+
+.fleet-card:hover .fleet-card__media img {
+  transform: scale(1.025);
+}
+
+.fleet-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: 22px 20px 18px;
+}
+
+.fleet-card__type {
+  margin-bottom: 8px;
+  color: #878b89;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fleet-card__title {
+  color: $fleet-text;
+  font-size: clamp(20px, 1.45vw, 25px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.fleet-card__description {
+  min-height: 52px;
+  margin-top: 10px;
+  color: $fleet-muted;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.fleet-card__specs {
+  display: grid;
+  gap: 0;
+  margin: auto 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(23, 28, 30, 0.09);
+}
+
+.fleet-card__specs div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding-block: 9px;
+  border-bottom: 1px solid rgba(23, 28, 30, 0.07);
+}
+
+.fleet-card__specs dt,
+.fleet-card__specs dd {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.fleet-card__specs dt {
+  color: #868b89;
+  font-weight: 600;
+}
+
+.fleet-card__specs dd {
+  color: #343b3d;
+  font-weight: 800;
+  text-align: right;
+}
+
+.fleet-card__button {
+  width: 100%;
+  min-height: 49px;
+  margin-top: 1px;
+  background: $fleet-dark;
+  color: $fleet-white;
+
+  &:hover {
+    background: $fleet-dark-2;
+    box-shadow: 0 12px 28px rgba(18, 24, 27, 0.13);
+  }
+}
+
+// ------------------------------------------------------------
+// ПАРТНЁРСКАЯ ПЛАТФОРМА
+// ------------------------------------------------------------
+.fleet-partner {
+  background: $fleet-light;
+  padding: 0 0 clamp(88px, 8vw, 132px);
+}
+
+.fleet-partner__panel {
+  position: relative;
+  display: grid;
+  min-height: 390px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(430px, 1.05fr);
+  align-items: center;
+  border-radius: main.$radius-lg;
+  background: #ebe7df;
+  overflow: hidden;
+}
+
+.fleet-partner__content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  padding: clamp(46px, 5vw, 78px);
+}
+
+.fleet-partner__title {
+  font-size: clamp(36px, 3.4vw, 58px);
+  line-height: 1.02;
+}
+
+.fleet-partner__description {
+  max-width: 630px;
+  margin-top: 22px;
+  color: $fleet-muted;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.fleet-partner__button {
+  margin-top: 28px;
+  background: $fleet-dark;
+  color: $fleet-white;
+
+  &:hover {
+    background: $fleet-dark-2;
+    box-shadow: 0 12px 30px rgba(18, 24, 27, 0.13);
+  }
+}
+
+.fleet-partner__visual {
+  position: absolute;
+  inset: 0 0 0 46%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.fleet-partner__visual::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #ebe7df 0%, rgba(235, 231, 223, 0.93) 12%, rgba(235, 231, 223, 0.25) 42%, rgba(235, 231, 223, 0) 66%);
+  content: "";
+  pointer-events: none;
+}
+
+.fleet-partner__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 66% center;
+}
+
+// ------------------------------------------------------------
+// REVEAL
+// ------------------------------------------------------------
+.page-autopark.has-fleet-motion [data-fleet-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 25px, 0) scale(0.99);
+}
+
+.page-autopark.has-fleet-motion [data-fleet-reveal].is-visible {
+  animation: fleet-rise 1.2s $fleet-ease both;
+}
+
+.page-autopark.has-fleet-motion .autopark-hero__title.is-visible { animation-delay: 0.1s; }
+.page-autopark.has-fleet-motion .autopark-hero__description.is-visible { animation-delay: 0.2s; }
+.page-autopark.has-fleet-motion .autopark-hero__actions.is-visible { animation-delay: 0.3s; }
+.page-autopark.has-fleet-motion .autopark-hero__feature:nth-child(1).is-visible { animation-delay: 0.44s; }
+.page-autopark.has-fleet-motion .autopark-hero__feature:nth-child(2).is-visible { animation-delay: 0.56s; }
+.page-autopark.has-fleet-motion .autopark-hero__feature:nth-child(3).is-visible { animation-delay: 0.68s; }
+
+@keyframes fleet-camera {
+  from { opacity: 0.55; transform: scale(1.055); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fleet-rise {
+  from { opacity: 0; transform: translate3d(0, 25px, 0) scale(0.99); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+// ------------------------------------------------------------
+// АДАПТИВ
+// ------------------------------------------------------------
+@media (max-width: 1360px) {
+  .autopark-hero__container {
+    grid-template-columns: minmax(0, 0.88fr) minmax(470px, 1.12fr);
+  }
+
+  .autopark-hero__media { width: 60vw; }
+  .fleet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fleet-card__description { min-height: 0; }
+}
+
+@media (max-width: 1100px) {
+  .autopark-hero__media { width: 66vw; }
+
+  .autopark-hero__container {
+    grid-template-columns: minmax(0, 0.7fr) minmax(430px, 1.3fr);
+    padding-top: 116px;
+  }
+
+  .autopark-hero__title { font-size: clamp(48px, 6vw, 70px); }
+
+  .fleet-catalog__heading {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .fleet-catalog__intro { max-width: 700px; }
+
+  .fleet-partner__panel {
+    grid-template-columns: 1fr;
+    min-height: 500px;
+    align-items: end;
+  }
+
+  .fleet-partner__visual { inset: 0; }
+  .fleet-partner__visual::before {
+    background: linear-gradient(180deg, rgba(235, 231, 223, 0.06) 0%, rgba(235, 231, 223, 0.1) 35%, #ebe7df 74%, #ebe7df 100%);
+  }
+  .fleet-partner__content { align-self: end; }
+}
+
+@media (max-width: main.$breakpoint-mobile) {
+  .autopark-hero {
+    min-height: max(820px, 100svh);
+  }
+
+  .autopark-hero__media {
+    inset: 0 0 auto;
+    width: 100%;
+    height: 52%;
+  }
+
+  .autopark-hero__image {
+    object-position: 46% 63%;
+  }
+
+  .autopark-hero__overlay {
+    background: linear-gradient(180deg, rgba(18, 24, 27, 0.19) 0%, rgba(18, 24, 27, 0.34) 32%, $fleet-dark 58%, $fleet-dark 100%);
+  }
+
+  .autopark-hero__container {
+    display: flex;
+    min-height: max(820px, 100svh);
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 34px;
+    padding-top: 360px;
+    padding-bottom: 30px;
+  }
+
+  .autopark-hero__content {
+    width: 100%;
+    max-width: 620px;
+    align-self: stretch;
+  }
+
+  .autopark-hero__eyebrow {
+    margin-bottom: 18px;
+    font-size: 10px;
+  }
+
+  .autopark-hero__title {
+    font-size: clamp(39px, 11vw, 58px);
+  }
+
+  .autopark-hero__description {
+    max-width: 500px;
+    margin-top: 19px;
+    font-size: 13px;
+  }
+
+  .autopark-hero__actions {
+    margin-top: 23px;
+  }
+
+  .autopark-hero__button {
+    min-height: 49px;
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .autopark-hero__features {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 18px;
+    align-self: stretch;
+  }
+
+  .autopark-hero__feature {
+    min-height: 33px;
+    gap: 8px;
+    padding-inline: 10px;
+
+    &:nth-child(odd) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    &:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .autopark-hero__feature-label { font-size: 11px; }
+
+  .fleet-catalog {
+    padding-block: 74px;
+  }
+
+  .fleet-catalog__eyebrow,
+  .fleet-partner__eyebrow { font-size: 9px; }
+
+  .fleet-catalog__title {
+    font-size: clamp(38px, 10.5vw, 54px);
+  }
+
+  .fleet-catalog__intro {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .fleet-filters {
+    margin-top: 30px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .fleet-filters__button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding-inline: 16px;
+  }
+
+  .fleet-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .fleet-card__media {
+    aspect-ratio: 1.48 / 1;
+  }
+
+  .fleet-card__body {
+    padding: 20px 18px 18px;
+  }
+
+  .fleet-card__title {
+    font-size: 23px;
+  }
+
+  .fleet-partner {
+    padding-bottom: 74px;
+  }
+
+  .fleet-partner__panel {
+    min-height: 620px;
+    border-radius: main.$radius-md;
+  }
+
+  .fleet-partner__visual {
+    height: 55%;
+    bottom: auto;
+  }
+
+  .fleet-partner__visual::before {
+    background: linear-gradient(180deg, rgba(235, 231, 223, 0) 0%, rgba(235, 231, 223, 0.13) 54%, #ebe7df 100%);
+  }
+
+  .fleet-partner__content {
+    padding: 320px 24px 30px;
+  }
+
+  .fleet-partner__title {
+    font-size: clamp(33px, 8.8vw, 47px);
+  }
+
+  .fleet-partner__description {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 374px) {
+  .autopark-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .autopark-hero__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .autopark-hero__image,
+  .page-autopark.has-fleet-motion [data-fleet-reveal] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+
+  .autopark-hero__button,
+  .fleet-card,
+  .fleet-card__media img,
+  .fleet-card__button,
+  .fleet-partner__button,
+  .fleet-filters__button {
+    transition: none;
+  }
+}

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#12181b" />
+    <meta
+      name="description"
+      content="Автопарк компании «Свои грузы»: автомобили для переездов, перевозки мебели, техники и других грузов по Абакану и Хакасии."
+    />
+    <title>Автопарк — Свои грузы | Грузоперевозки в Абакане</title>
+    <link
+      rel="preload"
+      href="site/img/autopark-hero.webp"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <link rel="stylesheet" href="site/css/autopark.css" />
+  </head>
+
+  <body class="page-autopark">
+    <site-header></site-header>
+
+    <main class="autopark-main" id="main">
+      <section class="autopark-hero" id="autopark" aria-labelledby="autopark-title">
+        <div class="autopark-hero__media" aria-hidden="true">
+          <img
+            class="autopark-hero__image"
+            src="site/img/autopark-hero.webp"
+            alt=""
+            width="1122"
+            height="1402"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+        <div class="autopark-hero__overlay" aria-hidden="true"></div>
+
+        <div class="autopark-hero__container container">
+          <div class="autopark-hero__content">
+            <p class="autopark-hero__eyebrow" data-fleet-reveal>Автопарк / Свои грузы</p>
+
+            <h1 class="autopark-hero__title" id="autopark-title" data-fleet-reveal>
+              Автопарк<br />компании
+            </h1>
+
+            <p class="autopark-hero__description" data-fleet-reveal>
+              Собственные автомобили для переездов, перевозки мебели, техники,
+              оборудования и других грузов по Абакану и Хакасии.
+            </p>
+
+            <div class="autopark-hero__actions" data-fleet-reveal>
+              <a class="autopark-hero__button autopark-hero__button--primary" href="#fleet-catalog">
+                Подобрать машину
+              </a>
+              <a class="autopark-hero__button autopark-hero__button--outline" href="index.html#services">
+                Посмотреть услуги
+              </a>
+            </div>
+          </div>
+
+          <ul class="autopark-hero__features" aria-label="Преимущества компании">
+            <li class="autopark-hero__feature" data-fleet-reveal>
+              <span class="autopark-hero__feature-number">01</span>
+              <span class="autopark-hero__feature-label">15 лет работы</span>
+            </li>
+            <li class="autopark-hero__feature" data-fleet-reveal>
+              <span class="autopark-hero__feature-number">02</span>
+              <span class="autopark-hero__feature-label">Более 1000 перевозок</span>
+            </li>
+            <li class="autopark-hero__feature" data-fleet-reveal>
+              <span class="autopark-hero__feature-number">03</span>
+              <span class="autopark-hero__feature-label">Абакан и Хакасия</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="fleet-catalog" id="fleet-catalog" aria-labelledby="fleet-catalog-title">
+        <div class="fleet-catalog__container container">
+          <div class="fleet-catalog__heading" data-fleet-reveal>
+            <div>
+              <p class="fleet-catalog__eyebrow">Наш автопарк</p>
+              <h2 class="fleet-catalog__title" id="fleet-catalog-title">
+                Подберите машину<br />под задачу
+              </h2>
+            </div>
+            <p class="fleet-catalog__intro">
+              В автопарке — автомобили под разные задачи. Выберите подходящий
+              вариант, а детали маршрута и перевозки согласуем заранее.
+            </p>
+          </div>
+
+          <div class="fleet-filters" aria-label="Фильтр автопарка" data-fleet-reveal>
+            <button class="fleet-filters__button is-active" type="button" data-fleet-filter="all" aria-pressed="true">Все</button>
+            <button class="fleet-filters__button" type="button" data-fleet-filter="van" aria-pressed="false">Фургоны</button>
+            <button class="fleet-filters__button" type="button" data-fleet-filter="moving" aria-pressed="false">Переезды</button>
+            <button class="fleet-filters__button" type="button" data-fleet-filter="loaders" aria-pressed="false">С грузчиками</button>
+            <button class="fleet-filters__button" type="button" data-fleet-filter="partner" aria-pressed="false">Партнёрские</button>
+          </div>
+
+          <div class="fleet-grid" aria-live="polite">
+            <article class="fleet-card" data-fleet-card data-category="van moving loaders" data-fleet-reveal>
+              <div class="fleet-card__media">
+                <img src="site/img/fleet-next.webp" alt="Газель NEXT 4.2 м компании Свои грузы" loading="lazy" decoding="async" />
+              </div>
+              <div class="fleet-card__body">
+                <div>
+                  <p class="fleet-card__type">Фургон</p>
+                  <h3 class="fleet-card__title">Газель NEXT 4.2 м</h3>
+                  <p class="fleet-card__description">Для переездов, перевозки мебели, техники и бытовых грузов.</p>
+                </div>
+                <dl class="fleet-card__specs">
+                  <div><dt>Грузоподъёмность</dt><dd>до 1,5 т</dd></div>
+                  <div><dt>Объём кузова</dt><dd>18 м³</dd></div>
+                  <div><dt>Длина кузова</dt><dd>4,2 м</dd></div>
+                  <div><dt>Тип кузова</dt><dd>Фургон</dd></div>
+                </dl>
+                <a class="fleet-card__button" href="index.html#calculator">Выбрать машину</a>
+              </div>
+            </article>
+
+            <article class="fleet-card" data-fleet-card data-category="van moving" data-fleet-reveal>
+              <div class="fleet-card__media">
+                <img src="site/img/fleet-tent.webp" alt="Тентованный грузовой автомобиль компании Свои грузы" loading="lazy" decoding="async" />
+              </div>
+              <div class="fleet-card__body">
+                <div>
+                  <p class="fleet-card__type">Тент</p>
+                  <h3 class="fleet-card__title">Тентованный фургон</h3>
+                  <p class="fleet-card__description">Для габаритных и нестандартных грузов с защитой от непогоды.</p>
+                </div>
+                <dl class="fleet-card__specs">
+                  <div><dt>Грузоподъёмность</dt><dd>до 3 т</dd></div>
+                  <div><dt>Объём кузова</dt><dd>28 м³</dd></div>
+                  <div><dt>Длина кузова</dt><dd>6,2 м</dd></div>
+                  <div><dt>Тип кузова</dt><dd>Тент</dd></div>
+                </dl>
+                <a class="fleet-card__button" href="index.html#calculator">Выбрать машину</a>
+              </div>
+            </article>
+
+            <article class="fleet-card" data-fleet-card data-category="moving loaders" data-fleet-reveal>
+              <div class="fleet-card__media">
+                <img src="site/img/fleet-board.webp" alt="Бортовая Газель компании Свои грузы" loading="lazy" decoding="async" />
+              </div>
+              <div class="fleet-card__body">
+                <div>
+                  <p class="fleet-card__type">Бортовой кузов</p>
+                  <h3 class="fleet-card__title">Бортовая Газель</h3>
+                  <p class="fleet-card__description">Для стройматериалов, техники, длинномеров и нестандартных грузов.</p>
+                </div>
+                <dl class="fleet-card__specs">
+                  <div><dt>Грузоподъёмность</dt><dd>до 1,5 т</dd></div>
+                  <div><dt>Длина кузова</dt><dd>4,2 м</dd></div>
+                  <div><dt>Тип кузова</dt><dd>Бортовой</dd></div>
+                  <div><dt>Погрузка</dt><dd>Боковая / верхняя</dd></div>
+                </dl>
+                <a class="fleet-card__button" href="index.html#calculator">Выбрать машину</a>
+              </div>
+            </article>
+
+            <article class="fleet-card" data-fleet-card data-category="partner van" data-fleet-reveal>
+              <div class="fleet-card__media">
+                <img src="site/img/fleet-partner.webp" alt="Партнёрский грузовой автомобиль на платформе Свои грузы" loading="lazy" decoding="async" />
+              </div>
+              <div class="fleet-card__body">
+                <div>
+                  <p class="fleet-card__type">Партнёрский транспорт</p>
+                  <h3 class="fleet-card__title">Партнёрская машина</h3>
+                  <p class="fleet-card__description">Для нестандартных задач, расширенных маршрутов и больших объёмов.</p>
+                </div>
+                <dl class="fleet-card__specs">
+                  <div><dt>Грузоподъёмность</dt><dd>от 5 т</dd></div>
+                  <div><dt>Объём кузова</dt><dd>от 30 м³</dd></div>
+                  <div><dt>Тип кузова</dt><dd>Разный</dd></div>
+                  <div><dt>Доступность</dt><dd>По запросу</dd></div>
+                </dl>
+                <a class="fleet-card__button" href="index.html#calculator">Выбрать машину</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="fleet-partner" id="partners" aria-labelledby="fleet-partner-title">
+        <div class="fleet-partner__container container">
+          <div class="fleet-partner__panel" data-fleet-reveal>
+            <div class="fleet-partner__content">
+              <p class="fleet-partner__eyebrow">Партнёрская платформа</p>
+              <h2 class="fleet-partner__title" id="fleet-partner-title">
+                В будущем на платформе<br />будут и партнёрские машины
+              </h2>
+              <p class="fleet-partner__description">
+                Мы закладываем возможность подключать частных перевозчиков и
+                транспортные компании. Владельцы машин смогут размещать транспорт,
+                получать заказы через платформу и зарабатывать вместе с «СВОИ ГРУЗЫ».
+              </p>
+              <a class="fleet-partner__button" href="#contacts">Стать партнёром</a>
+            </div>
+
+            <div class="fleet-partner__visual" aria-hidden="true">
+              <img src="site/img/autopark-partner.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+
+    <script src="site/scripts/components.js" defer></script>
+    <script src="site/scripts/main.js" defer></script>
+    <script src="site/scripts/autopark.js" defer></script>
+  </body>
+</html>

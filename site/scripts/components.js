@@ -24,24 +24,37 @@
     return templates.get(filename);
   }
 
-  // Hash links in shared templates refer to homepage sections.
-  // On about.html, only the footer contact section stays on this page.
+  // Hash-ссылки общих компонентов относятся к секциям главной.
+  // На внутренних страницах оставляем локальным только #contacts,
+  // а остальные якоря ведём обратно на index.html.
   function normalizeLinks(component) {
-    if (!document.body.classList.contains("page-about")) return;
+    const isAbout = document.body.classList.contains("page-about");
+    const isAutopark = document.body.classList.contains("page-autopark");
+    if (!isAbout && !isAutopark) return;
 
     component.querySelectorAll('a[href^="#"]').forEach((link) => {
       const hash = link.getAttribute("href");
       if (hash === "#contacts") return;
+
       if (link.classList.contains("site-footer__to-top")) {
-        link.setAttribute("href", "#about");
+        link.setAttribute("href", isAbout ? "#about" : "#autopark");
         return;
       }
+
       link.setAttribute("href", `index.html${hash}`);
     });
 
-    component.querySelectorAll('a[href="about.html"]').forEach((link) => {
-      link.setAttribute("aria-current", "page");
-    });
+    if (isAbout) {
+      component.querySelectorAll('a[href="about.html"]').forEach((link) => {
+        link.setAttribute("aria-current", "page");
+      });
+    }
+
+    if (isAutopark) {
+      component.querySelectorAll('a[href="autopark.html"]').forEach((link) => {
+        link.setAttribute("aria-current", "page");
+      });
+    }
   }
 
   class HTMLComponent extends HTMLElement {
