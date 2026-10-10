@@ -3,8 +3,8 @@
 // Появление отдельных элементов, а не целых колонок одним блоком.
 // Никакого автоскролла: каждая анимация зависит только от реальной прокрутки.
 (() => {
-  const scenes = document.querySelectorAll(".story, .prices");
-  const revealItems = document.querySelectorAll(".story [data-reveal], .prices [data-reveal]");
+  const scenes = document.querySelectorAll(".story, .prices, .estimate");
+  const revealItems = document.querySelectorAll(".story [data-reveal], .prices [data-reveal], .estimate [data-reveal]");
   if (!scenes.length || !revealItems.length) return;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -26,7 +26,7 @@
   );
 
   // На длинной мобильной секции каждая колонка открывается в своё время.
-  // На третьей секции заголовок, строки цен и подписи идут каскадом.
+  // В тарифах и форме элементы идут каскадом по мере появления в зоне просмотра.
   const elementObserver = new IntersectionObserver(
     (entries, observer) => {
       entries.forEach((entry) => {

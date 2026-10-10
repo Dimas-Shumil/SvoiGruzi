@@ -965,8 +965,481 @@ button:disabled {
   background: linear-gradient(180deg, rgba(18, 24, 27, 0), $dark 100%);
 }
 
+
 // ------------------------------------------------------------
-// 8. ПОЯВЛЕНИЕ КОНТЕНТА В СЦЕНАХ 2 И 3
+// 8. РАСЧЁТ ПЕРЕВОЗКИ — светлая форма + автомобиль справа
+// ------------------------------------------------------------
+
+.estimate {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #f0eee8;
+  color: $text-dark;
+
+  // Мягкий переход из тёмной тарифной сцены в светлую секцию.
+  &::before {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 3;
+    height: clamp(54px, 7vw, 112px);
+    background: linear-gradient(180deg, $dark 0%, rgba(18, 24, 27, 0) 100%);
+    content: "";
+    pointer-events: none;
+  }
+
+  &__container {
+    display: grid;
+    min-height: min(920px, 100dvh);
+    grid-template-columns: minmax(0, 0.96fr) minmax(430px, 1.04fr);
+    grid-template-rows: 1fr auto;
+    column-gap: clamp(36px, 5vw, 96px);
+    padding-top: clamp(120px, 10vw, 172px);
+    padding-bottom: clamp(42px, 4.5vw, 76px);
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 680px);
+    align-self: center;
+    padding-block: 20px 56px;
+  }
+
+  &__eyebrow {
+    margin-bottom: 16px;
+    color: #6f7372;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    max-width: 680px;
+    color: #111719;
+    font-size: clamp(52px, 5vw, 86px);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  &__description {
+    max-width: 580px;
+    margin-top: 24px;
+    color: #626867;
+    font-size: clamp(14px, 1.02vw, 17px);
+    font-weight: 500;
+    line-height: 1.65;
+  }
+
+  &__form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 14px;
+    margin-top: 34px;
+  }
+
+  &__field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      color: #676c6a;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 58px;
+      border: 1px solid rgba(17, 23, 25, 0.09);
+      border-radius: $radius-sm;
+      outline: 0;
+      background: rgba(255, 255, 255, 0.72);
+      color: #161c1e;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      transition:
+        border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+
+      &::placeholder {
+        color: #9a9e9c;
+        opacity: 1;
+      }
+
+      &:hover {
+        border-color: rgba(17, 23, 25, 0.18);
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      &:focus {
+        border-color: rgba(17, 23, 25, 0.36);
+        background: $white;
+        box-shadow: 0 0 0 4px rgba(17, 23, 25, 0.06);
+      }
+    }
+
+    select {
+      cursor: pointer;
+    }
+  }
+
+  &__submit {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(220px, 0.78fr) minmax(220px, 1.22fr);
+    align-items: center;
+    gap: 18px;
+    margin-top: 4px;
+  }
+
+  &__button {
+    display: inline-flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #111719;
+    border-radius: $radius-sm;
+    background: #111719;
+    color: $white;
+    padding: 14px 22px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+    transition:
+      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &:hover {
+      transform: translateY(-3px);
+      border-color: #20282b;
+      background: #20282b;
+      box-shadow: 0 14px 34px rgba(17, 23, 25, 0.16);
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
+  }
+
+  &__privacy {
+    max-width: 360px;
+    color: #8a8e8c;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.6;
+
+    a {
+      color: #4e5554;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__visual {
+    position: relative;
+    z-index: 1;
+    min-height: 600px;
+    align-self: stretch;
+    margin-right: -$padding-desktop;
+
+    &::before {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: $radius-sm;
+      background:
+        linear-gradient(
+          90deg,
+          #f0eee8 0%,
+          rgba(240, 238, 232, 0.86) 9%,
+          rgba(240, 238, 232, 0.25) 25%,
+          rgba(240, 238, 232, 0) 43%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(240, 238, 232, 0.18),
+          rgba(240, 238, 232, 0.02) 45%,
+          rgba(240, 238, 232, 0.12)
+        );
+      content: "";
+      pointer-events: none;
+    }
+  }
+
+  &__image {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: $radius-sm;
+    object-fit: cover;
+    object-position: 72% center;
+  }
+
+  &__benefits {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid rgba(17, 23, 25, 0.12);
+    list-style: none;
+  }
+
+  &__benefit {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 24px 26px 0 0;
+
+    &:not(:first-child) {
+      padding-left: 26px;
+      border-left: 1px solid rgba(17, 23, 25, 0.09);
+    }
+
+    > span:last-child {
+      display: grid;
+      gap: 4px;
+    }
+
+    strong {
+      color: #1a2022;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    small {
+      color: #7b807e;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+  }
+
+  &__benefit-number {
+    display: inline-flex;
+    width: 31px;
+    height: 31px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(17, 23, 25, 0.14);
+    border-radius: 50%;
+    color: #747a78;
+    font-size: 9px;
+    font-weight: 800;
+  }
+}
+
+@media (max-width: 1240px) {
+  .estimate {
+    &__container {
+      grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr);
+      column-gap: 36px;
+    }
+
+    &__visual {
+      margin-right: -$padding-tablet;
+    }
+
+    &__image {
+      object-position: 68% center;
+    }
+
+    &__title {
+      font-size: clamp(48px, 5.3vw, 70px);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .estimate {
+    &__container {
+      min-height: auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 0;
+      padding-top: 118px;
+    }
+
+    &__content {
+      width: min(100%, 760px);
+      padding-bottom: 46px;
+    }
+
+    &__visual {
+      min-height: clamp(360px, 55vw, 560px);
+      margin: 0 -$padding-tablet;
+
+      &::before {
+        background:
+          linear-gradient(
+            180deg,
+            #f0eee8 0%,
+            rgba(240, 238, 232, 0) 24%,
+            rgba(240, 238, 232, 0) 78%,
+            #f0eee8 100%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(240, 238, 232, 0.25),
+            rgba(240, 238, 232, 0) 30%
+          );
+      }
+    }
+
+    &__image {
+      object-position: 66% center;
+    }
+
+    &__benefits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 38px;
+    }
+
+    &__benefit {
+      min-height: 94px;
+      padding: 22px 22px 18px 0;
+
+      &:nth-child(even) {
+        padding-left: 22px;
+        border-left: 1px solid rgba(17, 23, 25, 0.09);
+      }
+
+      &:nth-child(3) {
+        padding-left: 0;
+        border-top: 1px solid rgba(17, 23, 25, 0.09);
+        border-left: 0;
+      }
+
+      &:nth-child(4) {
+        border-top: 1px solid rgba(17, 23, 25, 0.09);
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .estimate {
+    &::before {
+      height: 70px;
+    }
+
+    &__container {
+      padding-top: 92px;
+      padding-bottom: 42px;
+    }
+
+    &__content {
+      padding-block: 0 36px;
+    }
+
+    &__eyebrow {
+      margin-bottom: 13px;
+      font-size: 9px;
+    }
+
+    &__title {
+      font-size: clamp(40px, 12.2vw, 56px);
+      line-height: 1;
+    }
+
+    &__description {
+      margin-top: 18px;
+      font-size: 13px;
+    }
+
+    &__form {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    &__field {
+      gap: 7px;
+
+      input,
+      select {
+        min-height: 54px;
+        padding-inline: 14px;
+        font-size: 12px;
+      }
+    }
+
+    &__submit {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 3px;
+    }
+
+    &__button {
+      min-height: 54px;
+      font-size: 12px;
+    }
+
+    &__privacy {
+      max-width: 100%;
+      font-size: 9px;
+    }
+
+    &__visual {
+      min-height: 330px;
+      margin-inline: -$padding-mobile;
+    }
+
+    &__image {
+      object-position: 69% center;
+    }
+
+    &__benefits {
+      grid-template-columns: 1fr;
+      margin-top: 28px;
+    }
+
+    &__benefit,
+    &__benefit:not(:first-child),
+    &__benefit:nth-child(even),
+    &__benefit:nth-child(3),
+    &__benefit:nth-child(4) {
+      min-height: 0;
+      padding: 18px 0;
+      border-top: 1px solid rgba(17, 23, 25, 0.09);
+      border-left: 0;
+    }
+
+    &__benefit:first-child {
+      border-top: 0;
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// 9. ПОЯВЛЕНИЕ КОНТЕНТА В СЦЕНАХ 2–4
 // Отдельный элемент = отдельный reveal, как в первой сцене.
 // Без JS всё видно; анимации только при has-motion.
 // ------------------------------------------------------------
@@ -976,7 +1449,8 @@ $scene-duration: 2.4s;
 
 .has-motion {
   .story [data-reveal],
-  .prices [data-reveal] {
+  .prices [data-reveal],
+  .estimate [data-reveal] {
     opacity: 0;
     transform: translate3d(0, 28px, 0) scale(0.985);
 
@@ -1026,6 +1500,12 @@ $scene-duration: 2.4s;
   .prices__note.is-visible { animation-delay: 0.63s; }
   .prices__cta-wrap.is-visible { animation-delay: 0.73s; }
   .prices__hint.is-visible { animation-delay: 0.82s; }
+
+  // Кадр 4: заголовок, форма и нижние преимущества.
+  .estimate__title.is-visible { animation-delay: 0.12s; }
+  .estimate__description.is-visible { animation-delay: 0.24s; }
+  .estimate__form.is-visible { animation-delay: 0.36s; }
+  .estimate__benefits.is-visible { animation-delay: 0.5s; }
 }
 
 @keyframes scene-rise {
@@ -1060,7 +1540,8 @@ $scene-duration: 2.4s;
 @media (prefers-reduced-motion: reduce) {
   .has-motion {
     .story [data-reveal],
-    .prices [data-reveal] {
+    .prices [data-reveal],
+    .estimate [data-reveal] {
       opacity: 1;
       transform: none;
       animation: none;
@@ -1076,5 +1557,5 @@ $scene-duration: 2.4s;
 
 // Отмена hover-анимации кнопок для пользователей с уменьшенной анимацией.
 @media (prefers-reduced-motion: reduce) {
-  .hero__button, .prices__cta { transition: none; }
+  .hero__button, .prices__cta, .estimate__button { transition: none; }
 }

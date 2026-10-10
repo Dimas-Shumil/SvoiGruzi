@@ -1,0 +1,326 @@
+// Отдельная страница «О компании».
+// Основные стили, хедер и футер наследуются из main.
+// Компилируется в site/css/about.css. Главную страницу не меняем.
+@use "./main";
+
+// Цвета и скругления берём из основной темы, чтобы внутренние
+// страницы выглядели как продолжение Hero, без отдельного UI.
+$about-dark: main.$dark;
+$about-text: main.$text;
+$about-muted: main.$muted;
+$about-accent: main.$accent;
+$about-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+.page-about {
+  background: $about-dark;
+  color: $about-text;
+}
+
+.about-scene {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  min-height: 790px;
+  min-height: max(790px, 100svh);
+  overflow: hidden;
+  background: $about-dark;
+}
+
+.about-scene__media {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 62%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.about-scene__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 31% center;
+  filter: saturate(0.58) brightness(0.77);
+  transform: scale(1.045);
+  animation: about-camera 2.6s $about-ease both;
+}
+
+.about-scene__photo-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(18, 24, 27, 0.07) 0%, rgba(18, 24, 27, 0.02) 37%, rgba(18, 24, 27, 0.68) 75%, $about-dark 100%),
+    linear-gradient(180deg, rgba(18, 24, 27, 0.57) 0%, rgba(18, 24, 27, 0.06) 27%, rgba(18, 24, 27, 0.03) 64%, $about-dark 100%);
+}
+
+.about-scene__photo-caption {
+  position: absolute;
+  bottom: 54px;
+  left: max(80px, calc((100vw - 1720px) / 2 + 80px));
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+// .about-scene__photo-caption-mark {
+//   display: block;
+//   width: 27px;
+//   height: 1px;
+//   background: main.$white;
+// }
+
+.about-scene__container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 790px;
+  min-height: max(790px, 100svh);
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: center;
+  gap: 24px;
+  padding-top: 124px;
+  padding-bottom: 94px;
+}
+
+.about-scene__content {
+  width: 100%;
+  min-width: 0;
+  grid-column: 2;
+  justify-self: end;
+  max-width: 700px;
+  padding-left: clamp(8px, 2.1vw, 45px);
+}
+
+.about-scene__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.about-scene__title {
+  font-size: clamp(52px, 5.2vw, 88px);
+  font-weight: 800;
+  line-height: 1.045;
+  letter-spacing: -0.055em;
+}
+
+.about-scene__title span { color: main.$white; }
+
+.about-scene__description {
+  max-width: 620px;
+  margin-top: 26px;
+  color: $about-muted;
+  font-size: clamp(14px, 1.05vw, 17px);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.about-scene__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(35px, 4vw, 66px);
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.about-scene__fact {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+  padding: 0 17px 0 0;
+}
+
+.about-scene__fact + .about-scene__fact {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding-left: 20px;
+}
+
+.about-scene__fact strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px;
+  color: $about-text;
+  font-size: clamp(30px, 3vw, 49px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+
+.about-scene__fact strong span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(11px, 1vw, 15px);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.about-scene__fact small {
+  max-width: 155px;
+  color: $about-muted;
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.6;
+}
+
+.about-scene__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 28px;
+  justify-content: space-between;
+  margin-top: 26px;
+}
+
+.about-scene__bottom > p {
+  max-width: 310px;
+  color: $about-muted;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.8;
+}
+
+// Полностью повторяем основной стиль кнопки Hero.
+// Класс остаётся локальным для страницы, без отдельного buttons.scss.
+.about-scene__button {
+  display: inline-flex;
+  min-height: 53px;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border: 1px solid transparent;
+  border-radius: main.$radius-sm;
+  background: main.$white;
+  color: #27343d;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    transform 0.65s $about-ease,
+    background-color 0.65s $about-ease,
+    border-color 0.65s $about-ease,
+    box-shadow 0.65s $about-ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    background: #e7eae9;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.11);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+.about-scene__index {
+  position: absolute;
+  right: 80px;
+  bottom: 30px;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  pointer-events: none;
+}
+
+@keyframes about-camera {
+  from { transform: scale(1.045); opacity: 0.7; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+// Элементы видны без JS. Запускаем reveal только когда наблюдатель готов.
+.page-about.has-about-motion [data-about-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 23px, 0) scale(0.99);
+}
+
+.page-about.has-about-motion [data-about-reveal].is-visible {
+  animation: about-rise 1.25s $about-ease both;
+}
+
+.page-about.has-about-motion .about-scene__title.is-visible { animation-delay: 0.12s; }
+.page-about.has-about-motion .about-scene__description.is-visible { animation-delay: 0.25s; }
+.page-about.has-about-motion .about-scene__fact:nth-child(1).is-visible { animation-delay: 0.38s; }
+.page-about.has-about-motion .about-scene__fact:nth-child(2).is-visible { animation-delay: 0.47s; }
+.page-about.has-about-motion .about-scene__fact:nth-child(3).is-visible { animation-delay: 0.56s; }
+.page-about.has-about-motion .about-scene__bottom.is-visible { animation-delay: 0.66s; }
+
+@keyframes about-rise {
+  from { opacity: 0; transform: translate3d(0, 23px, 0) scale(0.99); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@media (max-width: 1399px) {
+  .about-scene__container { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+  .about-scene__title { font-size: clamp(46px, 4.7vw, 72px); }
+  .about-scene__fact + .about-scene__fact { padding-left: 14px; }
+  .about-scene__fact strong { font-size: clamp(29px, 3vw, 43px); }
+}
+
+@media (max-width: 1100px) {
+  .about-scene__container { grid-template-columns: minmax(0, 0.76fr) minmax(0, 1.24fr); padding-top: 112px; }
+  .about-scene__media { width: 61%; }
+  .about-scene__photo { object-position: 31% center; }
+  .about-scene__photo-caption { left: 48px; }
+  .about-scene__content { padding-left: 2vw; }
+  .about-scene__description { line-height: 1.65; }
+}
+
+@media (max-width: 767px) {
+  .about-scene { min-height: 0; }
+  .about-scene__media { inset: 0 0 auto 0; width: 100%; height: clamp(370px, 96vw, 650px); }
+  .about-scene__photo { object-position: 35% 45%; filter: saturate(0.65) brightness(0.76); }
+  .about-scene__photo-overlay {
+    background: linear-gradient(180deg, rgba(18, 24, 27, 0.36) 0%, rgba(18, 24, 27, 0.08) 25%, rgba(18, 24, 27, 0.2) 48%, rgba(18, 24, 27, 0.85) 79%, $about-dark 100%);
+  }
+  .about-scene__photo-caption { display: none; }
+  .about-scene__container { display: block; min-height: 0; padding-top: clamp(320px, 79vw, 520px); padding-bottom: 95px; }
+  .about-scene__content { width: 100%; max-width: 640px; padding-left: 0; }
+  .about-scene__eyebrow { margin-bottom: 19px; font-size: 9px; }
+  .about-scene__title { font-size: clamp(39px, 10.2vw, 66px); }
+  .about-scene__description { margin-top: 20px; font-size: 13px; line-height: 1.75; }
+  .about-scene__facts { margin-top: 34px; }
+  .about-scene__fact { padding-right: 9px; }
+  .about-scene__fact + .about-scene__fact { padding-left: 9px; }
+  .about-scene__fact strong { font-size: clamp(22px, 6.2vw, 38px); }
+  .about-scene__fact strong span { font-size: 10px; }
+  .about-scene__fact small { font-size: 9px; }
+  .about-scene__bottom { align-items: flex-start; gap: 18px; }
+  .about-scene__button { min-height: 49px; padding: 12px 16px; font-size: 12px; }
+  .about-scene__index { right: 32px; bottom: 25px; }
+}
+
+@media (max-width: 380px) {
+  .about-scene__fact { gap: 7px; }
+  .about-scene__fact strong { font-size: 22px; }
+  .about-scene__fact strong span { font-size: 9px; }
+  .about-scene__fact small { font-size: 9px; }
+  .about-scene__button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-scene__photo { animation: none; transform: none; }
+  .page-about.has-about-motion [data-about-reveal] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .about-scene__button { transition: none; }
+}

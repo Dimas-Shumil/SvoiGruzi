@@ -24,6 +24,26 @@
     return templates.get(filename);
   }
 
+  // Hash links in shared templates refer to homepage sections.
+  // On about.html, only the footer contact section stays on this page.
+  function normalizeLinks(component) {
+    if (!document.body.classList.contains("page-about")) return;
+
+    component.querySelectorAll('a[href^="#"]').forEach((link) => {
+      const hash = link.getAttribute("href");
+      if (hash === "#contacts") return;
+      if (link.classList.contains("site-footer__to-top")) {
+        link.setAttribute("href", "#about");
+        return;
+      }
+      link.setAttribute("href", `index.html${hash}`);
+    });
+
+    component.querySelectorAll('a[href="about.html"]').forEach((link) => {
+      link.setAttribute("aria-current", "page");
+    });
+  }
+
   class HTMLComponent extends HTMLElement {
     async load(filename, initialize) {
       if (this._loading || this._loaded) return;
@@ -32,6 +52,7 @@
         const html = await loadHTML(filename);
         if (!this.isConnected) return;
         this.innerHTML = html;
+        normalizeLinks(this);
         this._loaded = true;
         this._cleanup = initialize?.(this);
       } catch (error) {
