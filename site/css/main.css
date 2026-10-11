@@ -1036,7 +1036,7 @@ button:disabled {
     font-size: 12px;
   }
   .hero__features {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     row-gap: 18px;
   }
   .hero__feature {
@@ -1525,6 +1525,7 @@ button:disabled {
 .estimate__field {
   display: flex;
   min-width: 0;
+  grid-column: span 3;
   flex-direction: column;
   gap: 8px;
 }
@@ -1569,6 +1570,16 @@ button:disabled {
 }
 .estimate__field select {
   cursor: pointer;
+}
+.estimate__field--third {
+  grid-column: span 2;
+}
+.estimate__trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 .estimate__submit {
   display: grid;
@@ -1783,7 +1794,9 @@ button:disabled {
     gap: 12px;
     margin-top: 28px;
   }
-  .estimate__field {
+  .estimate__field,
+  .estimate__field--third {
+    grid-column: 1/-1;
     gap: 7px;
   }
   .estimate__field input,
@@ -1956,3 +1969,5 @@ button:disabled {
     transition: none;
   }
 }
+/* Unified select arrow */
+.estimate select{appearance:none;-webkit-appearance:none;padding-right:44px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23565e60' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;background-size:16px 16px}

@@ -41,3 +41,92 @@
   scenes.forEach((scene) => sceneObserver.observe(scene));
   revealItems.forEach((item) => elementObserver.observe(item));
 })();
+
+
+// ------------------------------------------------------------
+// Публичная заявка: форма главной → POST /api/requests.
+// ------------------------------------------------------------
+(() => {
+  const form = document.querySelector("[data-estimate-form]");
+  if (!form) return;
+
+  const submitButton = form.querySelector("[data-estimate-submit]");
+  const statusBox = form.querySelector("[data-estimate-status]");
+  const vehicleInput = form.querySelector("[data-estimate-vehicle]");
+  const dateInput = form.querySelector('input[name="date"]');
+
+  const query = new URLSearchParams(window.location.search);
+  const selectedVehicle = query.get("vehicle");
+
+  if (vehicleInput && selectedVehicle) {
+    vehicleInput.value = selectedVehicle.slice(0, 120);
+  }
+
+  if (dateInput) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    dateInput.min = `${year}-${month}-${day}`;
+  }
+
+  const setStatus = (message, type = "") => {
+    if (!statusBox) return;
+    statusBox.textContent = message;
+    statusBox.classList.toggle("is-success", type === "success");
+    statusBox.classList.toggle("is-error", type === "error");
+  };
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Отправляем...";
+    }
+
+    setStatus("");
+
+    try {
+      const response = await fetch("/api/requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Не удалось отправить заявку");
+      }
+
+      const preservedVehicle = vehicleInput?.value || "";
+      form.reset();
+
+      if (vehicleInput) vehicleInput.value = preservedVehicle;
+
+      setStatus(
+        data.message || "Заявка принята. Свяжемся с вами в ближайшее время.",
+        "success"
+      );
+    } catch (error) {
+      console.error("estimate request error:", error);
+      setStatus(
+        error.message || "Не удалось отправить заявку. Попробуйте ещё раз.",
+        "error"
+      );
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Рассчитать стоимость";
+      }
+    }
+  });
+})();

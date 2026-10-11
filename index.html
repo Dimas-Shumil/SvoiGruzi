@@ -170,13 +170,14 @@
               задачу и заранее назовём стоимость.
             </p>
 
-            <form class="estimate__form" data-reveal>
+            <form class="estimate__form" data-estimate-form data-reveal novalidate>
               <div class="estimate__field">
                 <label for="estimate-from">Откуда</label>
                 <input
                   id="estimate-from"
                   name="from"
                   type="text"
+                  required
                   placeholder="Например, Абакан"
                   autocomplete="street-address"
                 />
@@ -188,6 +189,7 @@
                   id="estimate-to"
                   name="to"
                   type="text"
+                  required
                   placeholder="Куда везём"
                 />
               </div>
@@ -213,25 +215,47 @@
                 </select>
               </div>
 
-              <div class="estimate__field">
+              <div class="estimate__field estimate__field--third">
                 <label for="estimate-date">Когда</label>
                 <input id="estimate-date" name="date" type="date" />
               </div>
 
-              <div class="estimate__field">
+              <div class="estimate__field estimate__field--third">
+                <label for="estimate-name">Ваше имя</label>
+                <input
+                  id="estimate-name"
+                  name="clientName"
+                  type="text"
+                  required
+                  minlength="2"
+                  maxlength="80"
+                  placeholder="Как к вам обращаться"
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="estimate__field estimate__field--third">
                 <label for="estimate-phone">Ваш телефон</label>
                 <input
                   id="estimate-phone"
                   name="phone"
                   type="tel"
+                  required
+                  maxlength="40"
                   placeholder="+7 (___) ___-__-__"
                   autocomplete="tel"
                   inputmode="tel"
                 />
               </div>
 
+              <div class="estimate__trap" aria-hidden="true">
+                <label for="estimate-website">Ваш сайт</label>
+                <input id="estimate-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+              </div>
+
               <div class="estimate__submit">
-                <button class="estimate__button" type="button">
+                <input type="hidden" name="vehicleSlug" value="" data-estimate-vehicle />
+                <button class="estimate__button" type="submit" data-estimate-submit>
                   Рассчитать стоимость
                 </button>
                 <p class="estimate__privacy">
@@ -240,6 +264,7 @@
                     >политикой конфиденциальности</a
                   >.
                 </p>
+                <p class="estimate__status" data-estimate-status role="status" aria-live="polite"></p>
               </div>
             </form>
           </div>

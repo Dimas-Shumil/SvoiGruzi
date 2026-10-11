@@ -1,0 +1,9 @@
+{
+  "name": "СВОИ ГРУЗЫ — управление",
+  "short_name": "СВОИ ГРУЗЫ",
+  "start_url": "/control/app.html#/dashboard",
+  "display": "standalone",
+  "background_color": "#101619",
+  "theme_color": "#101619",
+  "lang": "ru"
+}

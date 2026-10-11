@@ -1,0 +1,40 @@
+{
+  "name": "svoi-gruzi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Свои грузы — публичный сайт, заявки и внутренняя CRM",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "sass": "sass --watch site/sass:site/css --style=expanded --no-source-map",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:status": "prisma migrate status",
+    "owner:create": "node scripts/create-owner.js",
+    "vehicles:seed": "node scripts/seed-vehicles.js",
+    "db:backup": "node scripts/backup-database.js",
+    "test": "node --test --test-concurrency=1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "author": "ShumDev",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@prisma/client": "6.12.0",
+    "@tabler/icons-webfont": "3.46.0",
+    "argon2": "0.45.1",
+    "cookie-parser": "1.4.7",
+    "dotenv": "17.2.3",
+    "express": "5.1.0",
+    "express-rate-limit": "8.7.0",
+    "helmet": "8.1.0",
+    "nodemailer": "10.0.16"
+  },
+  "devDependencies": {
+    "prisma": "6.12.0",
+    "sass": "1.93.2"
+  }
+}

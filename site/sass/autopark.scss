@@ -62,7 +62,7 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
   height: 100%;
   object-fit: cover;
   object-position: 31% 62%;
-  filter: saturate(0.82) brightness(0.82);
+  filter: saturate(0.9) brightness(0.9);
   transform: scale(1.055);
   animation: fleet-camera 2.5s $fleet-ease both;
 }
@@ -72,8 +72,21 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(8, 13, 16, 0.16) 0%, rgba(8, 13, 16, 0.2) 34%, rgba(18, 24, 27, 0.62) 52%, rgba(18, 24, 27, 0.92) 68%, $fleet-dark 82%),
-    linear-gradient(180deg, rgba(8, 13, 16, 0.44) 0%, rgba(8, 13, 16, 0.03) 30%, rgba(8, 13, 16, 0.1) 68%, rgba(18, 24, 27, 0.87) 100%);
+    linear-gradient(
+      90deg,
+      rgba(8, 13, 16, 0.08) 0%,
+      rgba(8, 13, 16, 0.12) 40%,
+      rgba(18, 24, 27, 0.38) 58%,
+      rgba(18, 24, 27, 0.78) 74%,
+      rgba(18, 24, 27, 0.96) 92%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 13, 16, 0.3) 0%,
+      rgba(8, 13, 16, 0.02) 32%,
+      rgba(8, 13, 16, 0.06) 70%,
+      rgba(18, 24, 27, 0.72) 100%
+    );
   pointer-events: none;
 }
 

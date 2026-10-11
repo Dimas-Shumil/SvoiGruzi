@@ -1,0 +1,15 @@
+node_modules/
+.env
+*.log
+
+prisma/dev.db
+prisma/dev.db-journal
+prisma/*.db-shm
+prisma/*.db-wal
+
+backups/*
+!backups/.gitkeep
+
+.DS_Store
+Thumbs.db
+.vscode/*.log

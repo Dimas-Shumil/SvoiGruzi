@@ -25,8 +25,8 @@
   }
 
   // Hash-ссылки общих компонентов относятся к секциям главной.
-  // На внутренних страницах оставляем локальным только #contacts,
-  // а остальные якоря ведём обратно на index.html.
+  // На внутренних страницах #contacts остаётся локальным для футера,
+  // остальные якоря общего компонента ведём обратно на index.html.
   function normalizeLinks(component) {
     const isAbout = document.body.classList.contains("page-about");
     const isAutopark = document.body.classList.contains("page-autopark");

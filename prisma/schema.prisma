@@ -1,0 +1,276 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  STAFF
+}
+
+enum OrderType {
+  REGULAR
+  SCHEDULED
+}
+
+enum OrderStatus {
+  NEW
+  PLANNED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSFER
+  CARD
+  OTHER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ExpenseCategory {
+  FUEL
+  REPAIR
+  ADVERTISING
+  WASH
+  SERVICE
+  TAX
+  OTHER
+}
+
+enum VehicleOwnershipType {
+  OWN
+  PARTNER
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  BUSY
+  MAINTENANCE
+  UNAVAILABLE
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         UserRole   @default(OWNER)
+  isActive     Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  sessions     Session[]
+  orders       Order[]
+  tasks        Task[]
+  expenses     Expense[]
+  activities   Activity[]
+
+  @@index([role, isActive])
+}
+
+model Session {
+  id         Int      @id @default(autoincrement())
+  tokenHash  String   @unique
+  userId     Int
+  ipAddress  String?
+  userAgent  String?
+  expiresAt  DateTime
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Client {
+  id              Int      @id @default(autoincrement())
+  name            String?
+  phone           String?
+  phoneNormalized String?  @unique
+  defaultVehicle  String?
+  notes           String?
+  searchText      String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deletedAt       DateTime?
+  orders          Order[]
+
+  @@index([createdAt])
+  @@index([deletedAt, updatedAt])
+}
+
+model Carrier {
+  id                Int       @id @default(autoincrement())
+  name              String
+  companyName       String?
+  phone             String
+  phoneNormalized   String
+  email             String?
+  notes             String?
+  commissionPercent Float?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  vehicles          Vehicle[]
+
+  @@index([isActive, name])
+  @@index([phoneNormalized])
+}
+
+model Vehicle {
+  id              Int                  @id @default(autoincrement())
+  slug            String               @unique
+  name            String
+  shortDescription String?
+  description     String?
+  specsDescription String?
+  cargoDescription String?
+  cargoItems       String?
+  serviceArea      String?
+  previewImage    String?
+  capacityKg      Int?
+  volumeM3        Float?
+  bodyLengthM     Float?
+  bodyWidthM      Float?
+  bodyHeightM     Float?
+  bodyType        String?
+  loadingType     String?
+  categories      String               @default("")
+  ownershipType   VehicleOwnershipType @default(OWN)
+  carrierId       Int?
+  status          VehicleStatus        @default(AVAILABLE)
+  published       Boolean              @default(true)
+  sortOrder       Int                  @default(0)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  carrier         Carrier?             @relation(fields: [carrierId], references: [id], onDelete: SetNull)
+  images          VehicleImage[]
+  orders          Order[]
+
+  @@index([published, sortOrder])
+  @@index([ownershipType, status])
+  @@index([carrierId])
+}
+
+model VehicleImage {
+  id        Int      @id @default(autoincrement())
+  vehicleId Int
+  image     String
+  alt       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId, sortOrder])
+}
+
+model Order {
+  id                 Int            @id @default(autoincrement())
+  type               OrderType      @default(REGULAR)
+  status             OrderStatus    @default(NEW)
+  clientId           Int
+  pickupAddress      String?
+  destinationAddress String?
+  cargoType          String?
+  loadersRequired    Boolean?
+  vehicle            String?
+  vehicleId          Int?
+  amountCents        Int?
+  paidAmountCents    Int            @default(0)
+  paymentStatus      PaymentStatus  @default(UNPAID)
+  paymentMethod      PaymentMethod?
+  source             String         @default("Другое")
+  notes              String?
+  searchText         String         @default("")
+  scheduledAt        DateTime?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+  createdById        Int?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  client             Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdBy          User?          @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  vehicleRecord      Vehicle?       @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([scheduledAt])
+  @@index([completedAt])
+  @@index([clientId, createdAt])
+  @@index([vehicleId, createdAt])
+  @@index([source, createdAt])
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueAt       DateTime?
+  completedAt DateTime?
+  createdById Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdBy   User         @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([status, dueAt])
+}
+
+model Expense {
+  id          Int             @id @default(autoincrement())
+  amountCents Int
+  category    ExpenseCategory @default(OTHER)
+  occurredAt  DateTime        @default(now())
+  note        String?
+  createdById Int
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  createdBy   User            @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([occurredAt])
+  @@index([category, occurredAt])
+}
+
+model Activity {
+  id         Int      @id @default(autoincrement())
+  actorId    Int?
+  action     String
+  entityType String
+  entityId   Int?
+  title      String
+  metadata   String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+}
