@@ -30,14 +30,17 @@
   function normalizeLinks(component) {
     const isAbout = document.body.classList.contains("page-about");
     const isAutopark = document.body.classList.contains("page-autopark");
-    if (!isAbout && !isAutopark) return;
+    const isCar = document.body.classList.contains("page-car");
+    if (!isAbout && !isAutopark && !isCar) return;
 
     component.querySelectorAll('a[href^="#"]').forEach((link) => {
       const hash = link.getAttribute("href");
       if (hash === "#contacts") return;
 
       if (link.classList.contains("site-footer__to-top")) {
-        link.setAttribute("href", isAbout ? "#about" : "#autopark");
+        if (isAbout) link.setAttribute("href", "#about");
+        else if (isCar) link.setAttribute("href", "#car");
+        else link.setAttribute("href", "#autopark");
         return;
       }
 
@@ -50,7 +53,7 @@
       });
     }
 
-    if (isAutopark) {
+    if (isAutopark || isCar) {
       component.querySelectorAll('a[href="autopark.html"]').forEach((link) => {
         link.setAttribute("aria-current", "page");
       });

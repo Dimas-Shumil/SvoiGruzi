@@ -51,9 +51,9 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .autopark-hero__media {
   position: absolute;
-  inset: 0 auto 0 0;
+  inset: 0;
   z-index: -2;
-  width: min(64vw, 1180px);
+  width: 100%;
   overflow: hidden;
 }
 
@@ -61,7 +61,7 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 48% 62%;
+  object-position: 31% 62%;
   filter: saturate(0.82) brightness(0.82);
   transform: scale(1.055);
   animation: fleet-camera 2.5s $fleet-ease both;
@@ -72,7 +72,7 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(8, 13, 16, 0.12) 0%, rgba(8, 13, 16, 0.16) 35%, rgba(18, 24, 27, 0.82) 61%, $fleet-dark 80%),
+    linear-gradient(90deg, rgba(8, 13, 16, 0.16) 0%, rgba(8, 13, 16, 0.2) 34%, rgba(18, 24, 27, 0.62) 52%, rgba(18, 24, 27, 0.92) 68%, $fleet-dark 82%),
     linear-gradient(180deg, rgba(8, 13, 16, 0.44) 0%, rgba(8, 13, 16, 0.03) 30%, rgba(8, 13, 16, 0.1) 68%, rgba(18, 24, 27, 0.87) 100%);
   pointer-events: none;
 }
@@ -550,13 +550,13 @@ $fleet-ease: cubic-bezier(0.22, 1, 0.36, 1);
     grid-template-columns: minmax(0, 0.88fr) minmax(470px, 1.12fr);
   }
 
-  .autopark-hero__media { width: 60vw; }
+  .autopark-hero__media { width: 100%; }
   .fleet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fleet-card__description { min-height: 0; }
 }
 
 @media (max-width: 1100px) {
-  .autopark-hero__media { width: 66vw; }
+  .autopark-hero__media { width: 100%; }
 
   .autopark-hero__container {
     grid-template-columns: minmax(0, 0.7fr) minmax(430px, 1.3fr);
