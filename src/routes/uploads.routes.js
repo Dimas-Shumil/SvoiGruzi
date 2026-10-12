@@ -4,7 +4,6 @@ const fs = require("fs/promises");
 const express = require("express");
 const { asyncRoute } = require("../lib/async-route");
 const { HttpError } = require("../lib/http-error");
-const { recordActivity } = require("../lib/activity");
 
 const router = express.Router();
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -55,13 +54,6 @@ router.post("/vehicle-image", rawImage, asyncRoute(async (req, res) => {
   await fs.writeFile(destination, req.body, { flag: "wx", mode: 0o644 });
 
   const publicPath = `/site/img/uploads/${filename}`;
-  await recordActivity({
-    req,
-    action: "UPLOAD",
-    entityType: "VEHICLE_IMAGE",
-    title: "Загружено изображение для автопарка",
-    metadata: { path: publicPath, bytes: req.body.length, type }
-  });
 
   res.status(201).json({ success: true, path: publicPath });
 }));

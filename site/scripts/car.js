@@ -2,7 +2,12 @@
 
 (() => {
   const revealItems = document.querySelectorAll("[data-car-reveal]");
-  const slug = new URLSearchParams(window.location.search).get("slug") || "gazelle-next-4-2";
+  const pathMatch = window.location.pathname.match(/^\/autopark\/([^/]+)\/?$/);
+  let pathSlug = null;
+  if (pathMatch) {
+    try { pathSlug = decodeURIComponent(pathMatch[1]); } catch { pathSlug = pathMatch[1]; }
+  }
+  const slug = pathSlug || new URLSearchParams(window.location.search).get("slug") || "gazelle-next-4-2";
 
   const escapeHtml = (value) => String(value ?? "")
     .replace(/&/g, "&amp;")

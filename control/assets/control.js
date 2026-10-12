@@ -7,7 +7,8 @@ const state = {
   taskView: localStorage.getItem('sg-task-view') === 'board' ? 'board' : 'list',
   requestFilters: { search: '', status: '', type: '' },
   fleetFilters: { search: '', status: '', published: '' },
-  vehicles: []
+  vehicles: [],
+  idleMinutes: 15
 };
 
 const app = document.querySelector('#app');
@@ -253,18 +254,18 @@ async function renderDashboard() {
   const fleetAttention = data.vehicles.filter((vehicle) => vehicle.status !== 'AVAILABLE');
 
   app.innerHTML = `<div class="page">
-    ${pageHeader('Обзор', today, '<button class="control-button control-button--primary" data-action="new-request"><i class="ti ti-plus"></i><span>Новая заявка</span></button>')}
+    ${pageHeader('Сегодня', today, '<button class="control-button control-button--primary" data-action="new-request"><i class="ti ti-plus"></i><span>Новая заявка</span></button>')}
     <section class="metric-grid">
-      <article class="metric-card metric-card--accent"><span>Новых заявок</span><strong>${data.stats.newCount}</strong><small>Ожидают решения</small></article>
-      <article class="metric-card"><span>Запланировано</span><strong>${data.stats.plannedCount}</strong><small>Перевозки с выбранной датой</small></article>
-      <article class="metric-card"><span>Выручка сегодня</span><strong>${money(data.stats.revenueCents)}</strong><small>Оплачено ${money(data.stats.paidCents)}</small></article>
-      <article class="metric-card"><span>Автопарк</span><strong>${data.stats.vehicleCount}</strong><small>${fleetAttention.length ? `${fleetAttention.length} требуют внимания` : 'Все машины доступны'}</small></article>
+      <article class="metric-card metric-card--accent"><span>Выручка сегодня</span><strong>${money(data.stats.revenueCents)}</strong><small>Оплачено ${money(data.stats.paidCents)}</small></article>
+      <article class="metric-card"><span>Заявок</span><strong>${data.stats.orderCount}</strong><small>Средний чек ${money(data.stats.averageCheckCents)}</small></article>
+      <article class="metric-card"><span>Расходы</span><strong>${money(data.stats.expenseCents)}</strong><small>За сегодняшний день</small></article>
+      <article class="metric-card"><span>Прибыль</span><strong>${money(data.stats.profitCents)}</strong><small>${data.stats.debtCents ? `Долг ${money(data.stats.debtCents)}` : 'Долгов нет'}</small></article>
     </section>
 
     <div class="dashboard-grid">
-      <section class="panel panel--span-2"><header class="panel__header"><div><h2>Последние заявки</h2><p>Новые и недавние обращения</p></div><a class="text-link" href="#/requests">Все заявки</a></header><div class="request-list">${data.latestOrders.length ? data.latestOrders.map(requestRow).join('') : emptyState('inbox', 'Заявок пока нет', 'Новая заявка с сайта появится здесь автоматически.')}</div></section>
+      <section class="panel panel--span-2"><header class="panel__header"><div><h2>Сегодняшние заявки</h2><p>Последние обращения за день</p></div><a class="text-link" href="#/requests">Все заявки</a></header><div class="request-list">${data.recentOrders.length ? data.recentOrders.map(requestRow).join('') : emptyState('inbox', 'Сегодня заявок пока нет')}</div></section>
 
-      <section class="panel"><header class="panel__header"><div><h3>Ближайшие перевозки</h3><p>Запланированные заявки</p></div></header><div class="compact-list">${data.planned.length ? data.planned.map((order) => `<button class="compact-card" type="button" data-request-id="${order.id}"><span><b>${escapeHtml(dateTime(order.scheduledAt))}</b><small>${escapeHtml(routeText(order))}</small></span><i class="ti ti-chevron-right"></i></button>`).join('') : emptyState('calendar', 'Нет запланированных')}</div></section>
+      <section class="panel"><header class="panel__header"><div><h3>Ближайшие</h3><p>Запланированные перевозки</p></div></header><div class="compact-list">${data.planned.length ? data.planned.map((order) => `<button class="compact-card" type="button" data-request-id="${order.id}"><span><b>${escapeHtml(dateTime(order.scheduledAt))}</b><small>${escapeHtml(routeText(order))}</small></span><i class="ti ti-chevron-right"></i></button>`).join('') : emptyState('calendar', 'Нет запланированных заявок')}</div></section>
 
       <section class="panel"><header class="panel__header"><div><h3>Задачи</h3><p>Что нельзя забыть</p></div><a class="text-link" href="#/tasks">Открыть</a></header><div class="compact-list">${data.activeTasks.length ? data.activeTasks.map((task) => `<button class="compact-card" type="button" data-task-id="${task.id}"><span><b>${escapeHtml(task.title)}</b><small>${task.dueAt ? dateTime(task.dueAt) : 'Без срока'} · ${escapeHtml(labels.taskPriority[task.priority])}</small></span><i class="ti ti-chevron-right"></i></button>`).join('') : emptyState('circle-check', 'Активных задач нет')}</div></section>
 
@@ -346,8 +347,8 @@ function requestFormMarkup(order = null) {
     <label class="control-field"><span class="control-field__label">Что перевозим</span><input class="control-input" name="cargoType" maxlength="120" value="${attr(order?.cargoType || '')}" placeholder="Мебель, техника, коробки"></label>
     <label class="control-field"><span class="control-field__label">Грузчики</span><select class="control-select" name="loadersRequired"><option value=""${loaders === '' ? ' selected' : ''}>Не указано</option><option value="true"${loaders === 'true' ? ' selected' : ''}>Нужны</option><option value="false"${loaders === 'false' ? ' selected' : ''}>Не нужны</option></select></label>
 
-    <label class="control-field"><span class="control-field__label">Стоимость, ₽</span><input class="control-input" name="amount" type="number" min="0" max="100000000" step="1" value="${attr(amount)}" placeholder="Сумма заказа"></label>
-    <label class="control-field"><span class="control-field__label">Статус оплаты</span><select class="control-select" name="paymentStatus"><option value="PAID"${order?.paymentStatus === 'PAID' ? ' selected' : ''}>Оплачено</option><option value="UNPAID"${!order || order.paymentStatus === 'UNPAID' ? ' selected' : ''}>Не оплачено</option><option value="PARTIAL"${order?.paymentStatus === 'PARTIAL' ? ' selected' : ''}>Частично</option></select></label>
+    <label class="control-field"><span class="control-field__label">Стоимость, ₽ *</span><input class="control-input" name="amount" type="number" min="0" max="100000000" step="1" required value="${attr(amount)}" placeholder="Сумма заказа"></label>
+    <label class="control-field"><span class="control-field__label">Статус оплаты</span><select class="control-select" name="paymentStatus"><option value="PAID"${order?.paymentStatus === 'PAID' || !order ? ' selected' : ''}>Оплачено</option><option value="UNPAID"${order?.paymentStatus === 'UNPAID' ? ' selected' : ''}>Не оплачено</option><option value="PARTIAL"${order?.paymentStatus === 'PARTIAL' ? ' selected' : ''}>Частично</option></select></label>
     <label class="control-field"><span class="control-field__label">Способ оплаты</span><select class="control-select" name="paymentMethod"><option value="">Не указан</option>${Object.entries(labels.paymentMethod).map(([value, label]) => `<option value="${value}"${order?.paymentMethod === value ? ' selected' : ''}>${label}</option>`).join('')}</select></label>
     <label class="control-field"><span class="control-field__label">Оплачено, ₽</span><input class="control-input" name="paidAmount" type="number" min="0" step="1" value="${attr(paidAmount)}" placeholder="Для частичной оплаты"></label>
     <label class="control-field"><span class="control-field__label">Источник</span><select class="control-select" name="source">${sourceOptions(order?.source || 'Другое')}</select></label>
@@ -374,6 +375,7 @@ async function openRequestForm(order = null) {
       hint.textContent = type === 'SCHEDULED'
         ? 'Укажите дату и время перевозки — статус будет «Запланированная».'
         : 'Обычная заявка создаётся со статусом «Новая».';
+      if (!form.dataset.requestId) form.elements.paymentStatus.value = type === 'SCHEDULED' ? 'UNPAID' : 'PAID';
     });
   });
   const scheduledInput = scheduledField?.querySelector('input');
@@ -443,7 +445,7 @@ function clientRow(client) {
 
 async function renderClients() {
   const { clients } = await api('/clients');
-  app.innerHTML = `<div class="page">${pageHeader('Клиенты', 'Контакты, история заявок и задолженности', '<button class="control-button control-button--primary" data-action="new-client"><i class="ti ti-user-plus"></i><span>Добавить клиента</span></button>')}<section class="filters-bar"><label class="search-field search-field--grow"><i class="ti ti-search"></i><input id="client-search" type="search" maxlength="120" placeholder="Имя, телефон или машина"></label></section><section id="clients-content" class="panel"><div class="client-list client-list--head"><span>Клиент</span><span>Машина</span><span>История</span><span>Сумма</span><span>Долг</span></div><div class="client-list">${clients.length ? clients.map(clientRow).join('') : emptyState('users', 'Клиентов пока нет', 'Добавь клиента вручную или дождись первой заявки.')}</div></section></div>`;
+  app.innerHTML = `<div class="page">${pageHeader('Клиенты', 'Контакты, история заявок и задолженности')}<section class="filters-bar"><label class="search-field search-field--grow"><i class="ti ti-search"></i><input id="client-search" type="search" maxlength="120" placeholder="Имя, телефон или машина"></label></section><section id="clients-content" class="panel"><div class="client-list client-list--head"><span>Клиент</span><span>Машина</span><span>История</span><span>Сумма</span><span>Долг</span></div><div class="client-list">${clients.length ? clients.map(clientRow).join('') : emptyState('users', 'Клиенты появятся после первой заявки')}</div></section></div>`;
   let timer;
   document.querySelector('#client-search')?.addEventListener('input', (event) => {
     clearTimeout(timer);
@@ -464,21 +466,6 @@ function clientFormMarkup(client = null) {
     <label class="control-field field--wide"><span class="control-field__label">Заметка</span><textarea class="control-textarea" name="notes" maxlength="2000" placeholder="Особенности клиента, договорённости">${escapeHtml(client?.notes || '')}</textarea></label>
     <div class="form-error field--wide" hidden></div>
   </form>`;
-}
-
-function openClientCreate() {
-  openModal('Новый клиент', clientFormMarkup(), '<button class="control-button" type="button" data-close-modal>Отмена</button><button class="control-button control-button--primary" type="submit" form="client-form">Добавить клиента</button>');
-  document.querySelector('#client-form')?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (!form.reportValidity()) return;
-    try {
-      await api('/clients', { method: 'POST', body: formValues(form) });
-      closeModal();
-      toast('Клиент добавлен');
-      await renderClients();
-    } catch (error) { formError(form, error.message); }
-  });
 }
 
 async function showClient(id) {
@@ -531,11 +518,28 @@ async function loadFleet() {
 }
 
 function vehicleGalleryItems(vehicle) {
-  return (vehicle?.images || []).map((image) => ({ image: image.image, alt: image.alt || '' }));
+  const items = [];
+  const seen = new Set();
+  if (vehicle?.previewImage) {
+    items.push({ image: vehicle.previewImage, alt: vehicle.name || '' });
+    seen.add(vehicle.previewImage);
+  }
+  for (const image of vehicle?.images || []) {
+    if (!image?.image || seen.has(image.image)) continue;
+    items.push({ image: image.image, alt: image.alt || '' });
+    seen.add(image.image);
+  }
+  return items.slice(0, 12);
 }
 
 function vehicleFormMarkup(vehicle = null) {
   const gallery = JSON.stringify(vehicleGalleryItems(vehicle));
+  const ownership = vehicle?.ownershipType || 'OWN';
+  const carrier = vehicle?.carrier || {};
+  const bodyTypeOptions = ['Фургон', 'Тент', 'Бортовой', 'Рефрижератор', 'Изотермический'];
+  const currentBodyType = String(vehicle?.bodyType || '').trim();
+  const bodyTypePreset = bodyTypeOptions.includes(currentBodyType) ? currentBodyType : currentBodyType ? 'OTHER' : '';
+  const customBodyType = bodyTypePreset === 'OTHER' ? currentBodyType : '';
   return `<form id="vehicle-form" class="form-grid" data-vehicle-id="${vehicle?.id || ''}">
     <div class="form-section-title field--wide"><span>Основное</span></div>
     <label class="control-field"><span class="control-field__label">Название *</span><input class="control-input" name="name" required maxlength="160" value="${attr(vehicle?.name || '')}" placeholder="Газель NEXT 4.2 м"></label>
@@ -543,23 +547,44 @@ function vehicleFormMarkup(vehicle = null) {
     <label class="control-field field--wide"><span class="control-field__label">Краткое описание</span><input class="control-input" name="shortDescription" maxlength="400" value="${attr(vehicle?.shortDescription || '')}" placeholder="Текст в карточке и верхнем блоке car.html"></label>
     <label class="control-field field--wide"><span class="control-field__label">Основное описание</span><textarea class="control-textarea" name="description" maxlength="4000" placeholder="Описание автомобиля">${escapeHtml(vehicle?.description || '')}</textarea></label>
 
+    <div class="form-section-title field--wide"><span>Принадлежность</span></div>
+    <div class="request-type-toggle field--wide" role="group" aria-label="Принадлежность машины">
+      <button type="button" data-ownership-choice="OWN" class="${ownership === 'OWN' ? 'is-active' : ''}">Собственная</button>
+      <button type="button" data-ownership-choice="PARTNER" class="${ownership === 'PARTNER' ? 'is-active' : ''}">Партнёрская</button>
+    </div>
+    <input type="hidden" name="ownershipType" value="${attr(ownership)}">
+    <div class="partner-fields field--wide" data-partner-fields${ownership === 'PARTNER' ? '' : ' hidden'}>
+      <label class="control-field"><span class="control-field__label">Имя партнёра *</span><input class="control-input" name="partnerName" maxlength="120" value="${attr(carrier.name || '')}" placeholder="Имя владельца машины"></label>
+      <label class="control-field"><span class="control-field__label">Телефон партнёра *</span><input class="control-input" name="partnerPhone" type="tel" maxlength="30" value="${attr(carrier.phone || '')}" placeholder="+7 999 000-00-00"></label>
+      <label class="control-field"><span class="control-field__label">Компания</span><input class="control-input" name="partnerCompanyName" maxlength="180" value="${attr(carrier.companyName || '')}"></label>
+      <label class="control-field"><span class="control-field__label">Email</span><input class="control-input" name="partnerEmail" type="email" maxlength="180" value="${attr(carrier.email || '')}"></label>
+      <label class="control-field"><span class="control-field__label">Комиссия, %</span><input class="control-input" name="partnerCommissionPercent" type="number" min="0" max="100" step="0.1" value="${attr(carrier.commissionPercent ?? '')}"></label>
+      <label class="control-field"><span class="control-field__label">Заметка</span><input class="control-input" name="partnerNotes" maxlength="1000" value="${attr(carrier.notes || '')}"></label>
+    </div>
+
     <div class="form-section-title field--wide"><span>Характеристики для car.html</span></div>
     <label class="control-field"><span class="control-field__label">Грузоподъёмность, кг</span><input class="control-input" name="capacityKg" type="number" min="0" step="1" value="${attr(vehicle?.capacityKg ?? '')}"></label>
     <label class="control-field"><span class="control-field__label">Объём, м³</span><input class="control-input" name="volumeM3" type="number" min="0" step="0.1" value="${attr(vehicle?.volumeM3 ?? '')}"></label>
     <label class="control-field"><span class="control-field__label">Длина кузова, м</span><input class="control-input" name="bodyLengthM" type="number" min="0" step="0.1" value="${attr(vehicle?.bodyLengthM ?? '')}"></label>
     <label class="control-field"><span class="control-field__label">Ширина кузова, м</span><input class="control-input" name="bodyWidthM" type="number" min="0" step="0.1" value="${attr(vehicle?.bodyWidthM ?? '')}"></label>
     <label class="control-field"><span class="control-field__label">Высота кузова, м</span><input class="control-input" name="bodyHeightM" type="number" min="0" step="0.1" value="${attr(vehicle?.bodyHeightM ?? '')}"></label>
-    <label class="control-field"><span class="control-field__label">Тип кузова</span><input class="control-input" name="bodyType" maxlength="120" value="${attr(vehicle?.bodyType || '')}" placeholder="Закрытый фургон"></label>
+    <label class="control-field"><span class="control-field__label">Тип кузова</span><select class="control-select" name="bodyTypePreset"><option value=""${bodyTypePreset === '' ? ' selected' : ''}>Не указано</option>${bodyTypeOptions.map((option) => `<option value="${attr(option)}"${bodyTypePreset === option ? ' selected' : ''}>${escapeHtml(option)}</option>`).join('')}<option value="OTHER"${bodyTypePreset === 'OTHER' ? ' selected' : ''}>Другое</option></select></label>
+    <label class="control-field" data-body-type-other${bodyTypePreset === 'OTHER' ? '' : ' hidden'}><span class="control-field__label">Другой тип кузова</span><input class="control-input" name="bodyTypeOther" maxlength="120" value="${attr(customBodyType)}" placeholder="Укажите тип кузова"></label>
+    <input type="hidden" name="bodyType" value="${attr(currentBodyType)}">
     <label class="control-field"><span class="control-field__label">Погрузка</span><input class="control-input" name="loadingType" maxlength="160" value="${attr(vehicle?.loadingType || '')}" placeholder="Задняя / боковая"></label>
     <label class="control-field"><span class="control-field__label">Зона работы</span><input class="control-input" name="serviceArea" maxlength="180" value="${attr(vehicle?.serviceArea || '')}" placeholder="Абакан и Хакасия"></label>
-    <label class="control-field field--wide"><span class="control-field__label">Текст над характеристиками</span><textarea class="control-textarea" name="specsDescription" maxlength="2000" placeholder="Пояснение к параметрам машины">${escapeHtml(vehicle?.specsDescription || '')}</textarea></label>
-    <label class="control-field field--wide"><span class="control-field__label">Описание блока «Что можно перевозить»</span><textarea class="control-textarea" name="cargoDescription" maxlength="2000" placeholder="Для каких задач подходит машина">${escapeHtml(vehicle?.cargoDescription || '')}</textarea></label>
+    <label class="control-field field--wide"><span class="control-field__label">Текст над характеристиками</span><textarea class="control-textarea" name="specsDescription" maxlength="2000">${escapeHtml(vehicle?.specsDescription || '')}</textarea></label>
+    <label class="control-field field--wide"><span class="control-field__label">Описание блока «Что можно перевозить»</span><textarea class="control-textarea" name="cargoDescription" maxlength="2000">${escapeHtml(vehicle?.cargoDescription || '')}</textarea></label>
     <label class="control-field field--wide"><span class="control-field__label">Что можно перевозить</span><textarea class="control-textarea" name="cargoItems" maxlength="3000" placeholder="Каждый пункт с новой строки">${escapeHtml(vehicle?.cargoItems || '')}</textarea></label>
     <label class="control-field field--wide"><span class="control-field__label">Категории</span><input class="control-input" name="categories" maxlength="400" value="${attr(vehicle?.categories || '')}" placeholder="Переезды, мебель, техника"></label>
 
-    <div class="form-section-title field--wide"><span>Изображения</span></div>
-    <label class="control-field field--wide"><span class="control-field__label">Главное фото</span><input class="control-input" name="previewImage" maxlength="300" value="${attr(vehicle?.previewImage || '')}" placeholder="/site/img/fleet-next.webp"><span class="media-tools"><button class="inline-action" type="button" data-vehicle-upload="preview"><i class="ti ti-upload"></i> Загрузить фото</button><small class="control-field__hint">JPG, PNG или WebP до 5 МБ.</small></span><input type="file" accept="image/jpeg,image/png,image/webp" data-vehicle-file="preview" hidden></label>
-    <div class="control-field field--wide"><span class="control-field__label">Галерея</span><div class="vehicle-gallery-editor" data-vehicle-gallery-editor></div><input type="hidden" name="gallery" value="${attr(gallery)}"><span class="media-tools"><button class="inline-action" type="button" data-vehicle-upload="gallery"><i class="ti ti-photo-plus"></i> Добавить фотографии</button><small class="control-field__hint">До 12 фото. Крестик удаляет фотографию из галереи машины.</small></span><input type="file" accept="image/jpeg,image/png,image/webp" multiple data-vehicle-file="gallery" hidden></div>
+    <div class="form-section-title field--wide"><span>Фотографии</span></div>
+    <div class="control-field field--wide">
+      <div class="vehicle-gallery-editor" data-vehicle-gallery-editor></div>
+      <input type="hidden" name="gallery" value="${attr(gallery)}">
+      <span class="media-tools"><button class="inline-action" type="button" data-vehicle-upload="gallery"><i class="ti ti-photo-plus"></i> Добавить фотографии</button><small class="control-field__hint">До 12 фото. Первое фото — главное. Его можно поменять прямо в списке.</small></span>
+      <input type="file" accept="image/jpeg,image/png,image/webp" multiple data-vehicle-file="gallery" hidden>
+    </div>
 
     <div class="form-section-title field--wide"><span>Публикация</span></div>
     <label class="control-field"><span class="control-field__label">Статус</span><select class="control-select" name="status">${Object.entries(labels.vehicleStatus).map(([value, label]) => `<option value="${value}"${(vehicle?.status || 'AVAILABLE') === value ? ' selected' : ''}>${label}</option>`).join('')}</select></label>
@@ -573,9 +598,7 @@ function readVehicleGallery(form) {
   try {
     const value = JSON.parse(form.elements.gallery?.value || '[]');
     if (!Array.isArray(value)) return [];
-    return value
-      .filter((item) => item && typeof item.image === 'string' && item.image.trim())
-      .slice(0, 12)
+    return value.filter((item) => item && typeof item.image === 'string' && item.image.trim()).slice(0, 12)
       .map((item) => ({ image: item.image.trim(), alt: String(item.alt || '').trim() }));
   } catch {
     return [];
@@ -587,7 +610,7 @@ function renderVehicleGalleryEditor(form) {
   if (!editor) return;
   const gallery = readVehicleGallery(form);
   editor.innerHTML = gallery.length
-    ? gallery.map((item, index) => `<figure class="vehicle-gallery-editor__item"><img src="${attr(item.image)}" alt="${attr(item.alt || `Фото ${index + 1}`)}"><button class="vehicle-gallery-editor__remove" type="button" data-remove-gallery-image="${index}" aria-label="Удалить фото ${index + 1}" title="Удалить фото"><i class="ti ti-x" aria-hidden="true"></i></button></figure>`).join('')
+    ? gallery.map((item, index) => `<figure class="vehicle-gallery-editor__item"><img src="${attr(item.image)}" alt="${attr(item.alt || `Фото ${index + 1}`)}"><div class="vehicle-gallery-editor__actions"><button class="vehicle-gallery-editor__main${index === 0 ? ' is-main' : ''}" type="button" data-main-gallery-image="${index}"${index === 0 ? ' disabled' : ''}>${index === 0 ? 'Главное фото' : 'Сделать главным'}</button><button class="vehicle-gallery-editor__remove" type="button" data-remove-gallery-image="${index}" aria-label="Удалить фото ${index + 1}" title="Удалить фото"><i class="ti ti-x" aria-hidden="true"></i></button></div></figure>`).join('')
     : '<div class="vehicle-gallery-editor__empty"><i class="ti ti-photo"></i><span>Фотографий пока нет</span></div>';
 }
 
@@ -600,16 +623,11 @@ async function uploadVehicleImage(file) {
   const allowed = new Set(['image/jpeg', 'image/png', 'image/webp']);
   if (!allowed.has(file.type)) throw new Error('Разрешены только JPG, PNG и WebP');
   if (file.size <= 0 || file.size > 5 * 1024 * 1024) throw new Error('Размер изображения должен быть не больше 5 МБ');
-
   const response = await fetch('/api/control/uploads/vehicle-image', {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': file.type,
-      'X-CSRF-Token': state.csrfToken
-    },
+    headers: { Accept: 'application/json', 'Content-Type': file.type, 'X-CSRF-Token': state.csrfToken },
     credentials: 'same-origin',
-    body: file
+    body: file,
   });
   const data = await response.json().catch(() => ({}));
   if (response.status === 401) {
@@ -620,67 +638,108 @@ async function uploadVehicleImage(file) {
   return data.path;
 }
 
-function bindVehicleUploads() {
+function slugifyVehicleName(value) {
+  const map = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' };
+  return String(value || '').toLowerCase().split('').map((char) => map[char] ?? char).join('')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-').slice(0, 120);
+}
+
+function bindVehicleEditor() {
   const form = document.querySelector('#vehicle-form');
   if (!form) return;
+
+  const nameInput = form.elements.name;
+  const slugInput = form.elements.slug;
+  let slugTouched = Boolean(form.dataset.vehicleId && slugInput.value);
+  slugInput.addEventListener('input', () => { slugTouched = true; });
+  nameInput.addEventListener('input', () => {
+    if (!slugTouched || !slugInput.value.trim()) slugInput.value = slugifyVehicleName(nameInput.value);
+  });
+  if (!form.dataset.vehicleId && !slugInput.value) slugInput.value = slugifyVehicleName(nameInput.value);
+
+  const bodyTypePreset = form.elements.bodyTypePreset;
+  const bodyTypeOtherField = form.querySelector('[data-body-type-other]');
+  const bodyTypeOtherInput = form.elements.bodyTypeOther;
+  const syncBodyType = () => {
+    const preset = bodyTypePreset.value;
+    const isOther = preset === 'OTHER';
+    bodyTypeOtherField.hidden = !isOther;
+    bodyTypeOtherInput.required = isOther;
+    form.elements.bodyType.value = isOther ? bodyTypeOtherInput.value.trim() : preset;
+  };
+  bodyTypePreset.addEventListener('change', syncBodyType);
+  bodyTypeOtherInput.addEventListener('input', syncBodyType);
+  syncBodyType();
+
+  const partnerFields = form.querySelector('[data-partner-fields]');
+  const syncOwnership = (value) => {
+    form.elements.ownershipType.value = value;
+    form.querySelectorAll('[data-ownership-choice]').forEach((button) => button.classList.toggle('is-active', button.dataset.ownershipChoice === value));
+    partnerFields.hidden = value !== 'PARTNER';
+    for (const name of ['partnerName', 'partnerPhone']) form.elements[name].required = value === 'PARTNER';
+  };
+  form.querySelectorAll('[data-ownership-choice]').forEach((button) => button.addEventListener('click', () => syncOwnership(button.dataset.ownershipChoice)));
+  syncOwnership(form.elements.ownershipType.value);
 
   renderVehicleGalleryEditor(form);
   form.querySelector('[data-vehicle-gallery-editor]')?.addEventListener('click', (event) => {
     const removeButton = event.target.closest('[data-remove-gallery-image]');
-    if (!removeButton) return;
-    const index = Number(removeButton.dataset.removeGalleryImage);
-    const gallery = readVehicleGallery(form);
-    if (!Number.isInteger(index) || index < 0 || index >= gallery.length) return;
-    gallery.splice(index, 1);
-    writeVehicleGallery(form, gallery);
+    if (removeButton) {
+      const index = Number(removeButton.dataset.removeGalleryImage);
+      const gallery = readVehicleGallery(form);
+      if (Number.isInteger(index) && index >= 0 && index < gallery.length) {
+        gallery.splice(index, 1);
+        writeVehicleGallery(form, gallery);
+      }
+      return;
+    }
+    const mainButton = event.target.closest('[data-main-gallery-image]');
+    if (mainButton && !mainButton.disabled) {
+      const index = Number(mainButton.dataset.mainGalleryImage);
+      const gallery = readVehicleGallery(form);
+      if (Number.isInteger(index) && index > 0 && index < gallery.length) {
+        const [selected] = gallery.splice(index, 1);
+        gallery.unshift(selected);
+        writeVehicleGallery(form, gallery);
+      }
+    }
   });
 
-  for (const target of ['preview', 'gallery']) {
-    const button = form.querySelector(`[data-vehicle-upload="${target}"]`);
-    const input = form.querySelector(`[data-vehicle-file="${target}"]`);
-    if (!button || !input) continue;
-
-    button.addEventListener('click', () => input.click());
-    input.addEventListener('change', async () => {
-      const files = [...input.files];
-      if (!files.length) return;
-      const original = button.innerHTML;
-      button.disabled = true;
-      button.textContent = target === 'preview' ? 'Загружаем…' : `Загружаем ${files.length} фото…`;
-      try {
-        if (target === 'preview') {
-          const imagePath = await uploadVehicleImage(files[0]);
-          form.elements.previewImage.value = imagePath;
-          toast('Главное фото загружено');
-        } else {
-          const current = readVehicleGallery(form);
-          if (current.length + files.length > 12) throw new Error('В галерее может быть максимум 12 фотографий');
-          const uploaded = [];
-          for (const file of files) {
-            const imagePath = await uploadVehicleImage(file);
-            const alt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim();
-            uploaded.push({ image: imagePath, alt });
-          }
-          writeVehicleGallery(form, [...current, ...uploaded]);
-          toast(`Загружено фото: ${uploaded.length}`);
-        }
-      } catch (error) {
-        toast(error.message, 'error');
-      } finally {
-        input.value = '';
-        button.disabled = false;
-        button.innerHTML = original;
+  const button = form.querySelector('[data-vehicle-upload="gallery"]');
+  const input = form.querySelector('[data-vehicle-file="gallery"]');
+  button?.addEventListener('click', () => input.click());
+  input?.addEventListener('change', async () => {
+    const files = [...input.files];
+    if (!files.length) return;
+    const original = button.innerHTML;
+    button.disabled = true;
+    button.textContent = `Загружаем ${files.length} фото…`;
+    try {
+      const current = readVehicleGallery(form);
+      if (current.length + files.length > 12) throw new Error('В галерее может быть максимум 12 фотографий');
+      const uploaded = [];
+      for (const file of files) {
+        const imagePath = await uploadVehicleImage(file);
+        const alt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim();
+        uploaded.push({ image: imagePath, alt });
       }
-    });
-  }
+      writeVehicleGallery(form, [...current, ...uploaded]);
+      toast(`Загружено фото: ${uploaded.length}`);
+    } catch (error) {
+      toast(error.message, 'error');
+    } finally {
+      input.value = '';
+      button.disabled = false;
+      button.innerHTML = original;
+    }
+  });
 }
-
 
 async function openVehicleForm(vehicle = null) {
   const isEdit = Boolean(vehicle?.id);
   openModal(isEdit ? vehicle.name : 'Добавить машину', vehicleFormMarkup(vehicle), `<button class="control-button" type="button" data-close-modal>Отмена</button><button class="control-button control-button--primary" type="submit" form="vehicle-form">${isEdit ? 'Сохранить' : 'Добавить машину'}</button>`, true);
   document.querySelector('#vehicle-form')?.addEventListener('submit', submitVehicleForm);
-  bindVehicleUploads();
+  bindVehicleEditor();
 }
 
 async function submitVehicleForm(event) {
@@ -693,6 +752,8 @@ async function submitVehicleForm(event) {
     const body = formValues(form);
     body.images = readVehicleGallery(form);
     delete body.gallery;
+    delete body.bodyTypePreset;
+    delete body.bodyTypeOther;
     const id = form.dataset.vehicleId;
     await api(id ? `/vehicles/${id}` : '/vehicles', { method: id ? 'PATCH' : 'POST', body });
     closeModal();
@@ -705,9 +766,11 @@ async function submitVehicleForm(event) {
 
 async function showVehicle(id) {
   const { vehicle } = await api(`/vehicles/${id}`);
-  openModal(vehicle.name, `<div class="vehicle-detail"><div class="vehicle-detail__hero">${vehicle.previewImage ? `<img src="${attr(vehicle.previewImage)}" alt="">` : '<i class="ti ti-truck"></i>'}<div><span>${vehicleStatusBadge(vehicle.status)}</span><h3>${escapeHtml(vehicle.name)}</h3><p>${escapeHtml(vehicle.shortDescription || 'Описание не заполнено')}</p></div></div><div class="detail-grid"><div class="detail-item"><span>Slug</span><strong>${escapeHtml(vehicle.slug)}</strong></div><div class="detail-item"><span>На сайте</span><strong>${vehicle.published ? 'Да' : 'Нет'}</strong></div><div class="detail-item"><span>Грузоподъёмность</span><strong>${formatCapacity(vehicle.capacityKg)}</strong></div><div class="detail-item"><span>Объём</span><strong>${vehicle.volumeM3 ? `${String(vehicle.volumeM3).replace('.', ',')} м³` : '—'}</strong></div><div class="detail-item"><span>Размер кузова</span><strong>${formatMeters(vehicle.bodyLengthM)} × ${formatMeters(vehicle.bodyWidthM)} × ${formatMeters(vehicle.bodyHeightM)}</strong></div><div class="detail-item"><span>Тип кузова</span><strong>${escapeHtml(vehicle.bodyType || '—')}</strong></div><div class="detail-item"><span>Погрузка</span><strong>${escapeHtml(vehicle.loadingType || '—')}</strong></div><div class="detail-item"><span>Зона работы</span><strong>${escapeHtml(vehicle.serviceArea || '—')}</strong></div><div class="detail-item"><span>Заявок в истории</span><strong>${vehicle._count?.orders || 0}</strong></div></div>${vehicle.images.length ? `<div class="vehicle-gallery-admin">${vehicle.images.map((image) => `<img src="${attr(image.image)}" alt="${attr(image.alt || '')}">`).join('')}</div>` : ''}</div><div class="modal-actions"><button class="control-button" data-edit-vehicle="${vehicle.id}"><i class="ti ti-edit"></i> Редактировать</button><button class="control-button control-button--danger" data-delete-vehicle="${vehicle.id}"><i class="ti ti-trash"></i> Удалить</button></div>`, '<button class="control-button" type="button" data-close-modal>Закрыть</button>', true);
+  const partner = vehicle.ownershipType === 'PARTNER' && vehicle.carrier
+    ? `<div class="detail-item"><span>Принадлежность</span><strong>Партнёрская</strong></div><div class="detail-item"><span>Партнёр</span><strong>${escapeHtml(vehicle.carrier.name)}</strong></div>`
+    : `<div class="detail-item"><span>Принадлежность</span><strong>Собственная</strong></div>`;
+  openModal(vehicle.name, `<div class="vehicle-detail"><div class="vehicle-detail__hero">${vehicle.previewImage ? `<img src="${attr(vehicle.previewImage)}" alt="">` : '<i class="ti ti-truck"></i>'}<div><span>${vehicleStatusBadge(vehicle.status)}</span><h3>${escapeHtml(vehicle.name)}</h3><p>${escapeHtml(vehicle.shortDescription || 'Описание не заполнено')}</p></div></div><div class="detail-grid">${partner}<div class="detail-item"><span>Slug</span><strong>${escapeHtml(vehicle.slug)}</strong></div><div class="detail-item"><span>На сайте</span><strong>${vehicle.published ? 'Да' : 'Нет'}</strong></div><div class="detail-item"><span>Грузоподъёмность</span><strong>${formatCapacity(vehicle.capacityKg)}</strong></div><div class="detail-item"><span>Объём</span><strong>${vehicle.volumeM3 ? `${String(vehicle.volumeM3).replace('.', ',')} м³` : '—'}</strong></div><div class="detail-item"><span>Размер кузова</span><strong>${formatMeters(vehicle.bodyLengthM)} × ${formatMeters(vehicle.bodyWidthM)} × ${formatMeters(vehicle.bodyHeightM)}</strong></div><div class="detail-item"><span>Тип кузова</span><strong>${escapeHtml(vehicle.bodyType || '—')}</strong></div><div class="detail-item"><span>Погрузка</span><strong>${escapeHtml(vehicle.loadingType || '—')}</strong></div><div class="detail-item"><span>Зона работы</span><strong>${escapeHtml(vehicle.serviceArea || '—')}</strong></div><div class="detail-item"><span>Заявок в истории</span><strong>${vehicle._count?.orders || 0}</strong></div></div>${vehicle.images.length ? `<div class="vehicle-gallery-admin">${vehicle.images.map((image) => `<img src="${attr(image.image)}" alt="${attr(image.alt || '')}">`).join('')}</div>` : ''}</div><div class="modal-actions"><button class="control-button" data-edit-vehicle="${vehicle.id}"><i class="ti ti-edit"></i> Редактировать</button><button class="control-button control-button--danger" data-delete-vehicle="${vehicle.id}"><i class="ti ti-trash"></i> Удалить</button></div>`, '<button class="control-button" type="button" data-close-modal>Закрыть</button>', true);
 }
-
 
 function taskCard(task) {
   return `<article class="task-row${task.status === 'DONE' ? ' is-done' : ''}"><input class="task-row__check" type="checkbox" data-task-done="${task.id}" aria-label="${task.status === 'DONE' ? 'Вернуть задачу' : 'Выполнить задачу'}"${task.status === 'DONE' ? ' checked' : ''}><span class="task-row__content"><b>${escapeHtml(task.title)}</b><small>${escapeHtml(task.description || '')}</small></span>${badge(labels.taskPriority[task.priority], task.priority === 'HIGH' ? 'orange' : '')}<span class="task-row__date">${task.dueAt ? dateTime(task.dueAt) : 'Без срока'}</span><button class="icon-button icon-button--danger" type="button" data-delete-task="${task.id}" aria-label="Удалить задачу"><i class="ti ti-trash"></i></button></article>`;
@@ -745,23 +808,24 @@ async function renderFinances() {
   const range = monthRange();
   const query = isoRangeQuery(range);
   const [summary, expenseData] = await Promise.all([api(`/finances/summary?${query}`), api(`/finances/expenses?${query}`)]);
-  app.innerHTML = `<div class="page">${pageHeader('Финансы', 'Доходы и расходы за текущий месяц', '<button class="control-button control-button--primary" data-action="new-expense"><i class="ti ti-plus"></i><span>Добавить расход</span></button>')}<section class="finance-grid"><article class="finance-card finance-card--accent"><span>Выручка</span><strong>${money(summary.stats.revenueCents)}</strong><small>${summary.stats.orderCount} выполненных заявок</small></article><article class="finance-card"><span>Оплачено</span><strong>${money(summary.stats.paidCents)}</strong><small>Долг ${money(summary.stats.debtCents)}</small></article><article class="finance-card finance-card--danger"><span>Расходы</span><strong>${money(summary.stats.expenseCents)}</strong><small>За текущий месяц</small></article><article class="finance-card"><span>Прибыль</span><strong>${money(summary.stats.profitCents)}</strong><small>Средний чек ${money(summary.stats.averageCheckCents)}</small></article></section><section class="panel"><header class="panel__header"><div><h2>Расходы</h2><p>Нажми на строку, чтобы изменить запись</p></div><button class="text-link" type="button" data-action="export-csv">Выгрузить CSV</button></header><div class="expense-list">${expenseData.expenses.length ? expenseData.expenses.map((expense) => `<article class="expense-row" data-expense='${attr(JSON.stringify(expense))}' tabindex="0" role="button"><span>${shortDate(expense.occurredAt)}</span><span><b>${escapeHtml(labels.expenseCategory[expense.category])}</b><small>${escapeHtml(expense.note || '')}</small></span><strong>${money(expense.amountCents)}</strong><button class="icon-button icon-button--danger" type="button" data-delete-expense="${expense.id}" aria-label="Удалить расход"><i class="ti ti-trash"></i></button></article>`).join('') : emptyState('receipt', 'Расходов за месяц нет')}</div></section></div>`;
+  app.innerHTML = `<div class="page">${pageHeader('Финансы', 'Доходы и расходы за текущий месяц', '<button class="control-button control-button--primary" data-action="new-expense"><i class="ti ti-plus"></i><span>Добавить расход</span></button>')}
+    <section class="finance-grid"><article class="finance-card finance-card--accent"><span>Выручка</span><strong>${money(summary.stats.revenueCents)}</strong></article><article class="finance-card"><span>Оплачено</span><strong>${money(summary.stats.paidCents)}</strong></article><article class="finance-card finance-card--danger"><span>Расходы</span><strong>${money(summary.stats.expenseCents)}</strong></article><article class="finance-card"><span>Прибыль</span><strong>${money(summary.stats.profitCents)}</strong></article></section>
+    <section class="panel"><header class="panel__header"><div><h2>Расходы</h2><p>${summary.stats.orderCount} выполненных заявок · средний чек ${money(summary.stats.averageCheckCents)} · долг ${money(summary.stats.debtCents)}</p></div><button class="text-link" type="button" data-action="export-csv">Выгрузить CSV</button></header><div class="expense-list">${expenseData.expenses.length ? expenseData.expenses.map((expense) => `<article class="expense-row"><span>${shortDate(expense.occurredAt)}</span><span>${escapeHtml(labels.expenseCategory[expense.category])}<small>${escapeHtml(expense.note || '')}</small></span><strong>${money(expense.amountCents)}</strong><button class="icon-button icon-button--danger" type="button" data-delete-expense="${expense.id}" aria-label="Удалить расход"><i class="ti ti-trash"></i></button></article>`).join('') : emptyState('receipt', 'Расходов за месяц нет')}</div></section>
+  </div>`;
 }
 
-function openExpenseForm(expense = null) {
-  const amount = expense ? expense.amountCents / 100 : '';
-  const date = datetimeLocal(expense?.occurredAt || new Date());
-  openModal(expense ? 'Редактировать расход' : 'Новый расход', `<form id="expense-form" class="form-grid" data-expense-id="${expense?.id || ''}"><label class="control-field"><span class="control-field__label">Сумма, ₽ *</span><input class="control-input" name="amount" type="number" min="0.01" step="0.01" required value="${attr(amount)}"></label><label class="control-field"><span class="control-field__label">Категория</span><select class="control-select" name="category">${Object.entries(labels.expenseCategory).map(([value, label]) => `<option value="${value}"${(expense?.category || 'OTHER') === value ? ' selected' : ''}>${label}</option>`).join('')}</select></label><label class="control-field field--wide"><span class="control-field__label">Дата и время</span><input class="control-input" name="occurredAt" type="datetime-local" value="${attr(date)}"></label><label class="control-field field--wide"><span class="control-field__label">Комментарий</span><textarea class="control-textarea" name="note" maxlength="1000">${escapeHtml(expense?.note || '')}</textarea></label><div class="form-error field--wide" hidden></div></form>`, '<button class="control-button" type="button" data-close-modal>Отмена</button><button class="control-button control-button--primary" type="submit" form="expense-form">Сохранить</button>');
+function openExpenseForm() {
+  const now = datetimeLocal(new Date());
+  openModal('Новый расход', `<form id="expense-form" class="form-grid"><label class="control-field"><span class="control-field__label">Сумма, ₽ *</span><input class="control-input" name="amount" type="number" min="0.01" step="0.01" required></label><label class="control-field"><span class="control-field__label">Категория</span><select class="control-select" name="category">${Object.entries(labels.expenseCategory).map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}</select></label><label class="control-field field--wide"><span class="control-field__label">Дата и время</span><input class="control-input" name="occurredAt" type="datetime-local" value="${now}"></label><label class="control-field field--wide"><span class="control-field__label">Комментарий</span><textarea class="control-textarea" name="note" maxlength="1000"></textarea></label><div class="form-error field--wide" hidden></div></form>`, '<button class="control-button" type="button" data-close-modal>Отмена</button><button class="control-button control-button--primary" type="submit" form="expense-form">Добавить</button>');
   document.querySelector('#expense-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const body = formValues(form);
     if (body.occurredAt) body.occurredAt = new Date(body.occurredAt).toISOString();
     try {
-      const id = form.dataset.expenseId;
-      await api(id ? `/finances/expenses/${id}` : '/finances/expenses', { method: id ? 'PATCH' : 'POST', body });
+      await api('/finances/expenses', { method: 'POST', body });
       closeModal();
-      toast(id ? 'Расход сохранён' : 'Расход добавлен');
+      toast('Расход добавлен');
       await renderFinances();
     } catch (error) { formError(form, error.message); }
   });
@@ -813,7 +877,6 @@ document.addEventListener('click', async (event) => {
 
   const action = event.target.closest('[data-action]')?.dataset.action;
   if (action === 'new-request') { await openRequestForm(); return; }
-  if (action === 'new-client') { openClientCreate(); return; }
   if (action === 'new-vehicle') { await openVehicleForm(); return; }
   if (action === 'new-task') { openTaskForm(); return; }
   if (action === 'new-expense') { openExpenseForm(); return; }
@@ -944,13 +1007,6 @@ document.addEventListener('click', async (event) => {
     return;
   }
 
-  const expenseRow = event.target.closest('[data-expense]');
-  if (expenseRow && !event.target.closest('[data-delete-expense]')) {
-    try { openExpenseForm(JSON.parse(expenseRow.dataset.expense)); }
-    catch { toast('Не удалось открыть расход', 'error'); }
-    return;
-  }
-
   const requestElement = event.target.closest('.request-row[data-request-id], .board-card[data-request-id], .compact-card[data-request-id]');
   if (requestElement) { await showRequest(requestElement.dataset.requestId); return; }
 
@@ -999,6 +1055,28 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+let idleTimer = null;
+let lastKeepAliveAt = 0;
+
+function armIdleTimer() {
+  window.clearTimeout(idleTimer);
+  idleTimer = window.setTimeout(() => {
+    window.location.replace('/control/login.html?reason=idle');
+  }, state.idleMinutes * 60 * 1000);
+}
+
+function registerAdminActivity() {
+  armIdleTimer();
+  const now = Date.now();
+  if (now - lastKeepAliveAt < 60 * 1000 || !state.csrfToken) return;
+  lastKeepAliveAt = now;
+  api('/auth/me').catch(() => {});
+}
+
+for (const eventName of ['pointerdown', 'keydown', 'touchstart', 'input']) {
+  document.addEventListener(eventName, registerAdminActivity, { passive: true });
+}
+
 window.addEventListener('hashchange', renderCurrentRoute);
 
 (async function boot() {
@@ -1006,6 +1084,8 @@ window.addEventListener('hashchange', renderCurrentRoute);
     const data = await api('/auth/me');
     state.user = data.user;
     state.csrfToken = data.csrfToken;
+    state.idleMinutes = Number(data.idleMinutes) || 15;
+    armIdleTimer();
     document.querySelector('#user-name').textContent = data.user.name;
     document.querySelector('#user-role').textContent = data.user.role;
     document.querySelector('#user-avatar').textContent = data.user.name.slice(0, 1).toUpperCase();

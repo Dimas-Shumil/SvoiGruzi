@@ -116,7 +116,23 @@ app.use("/components", express.static(path.join(root, "components"), publicStati
 app.get("/site/privacy-policy.html", (_req, res) => res.sendFile(path.join(root, "site", "privacy-policy.html")));
 app.get("/site/offer.html", (_req, res) => res.sendFile(path.join(root, "site", "offer.html")));
 
-for (const file of ["index.html", "about.html", "autopark.html", "car.html"]) {
+const vehicleSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+app.get('/autopark/:slug', (req, res, next) => {
+  const slug = String(req.params.slug || '').trim().toLowerCase();
+  if (!vehicleSlugPattern.test(slug)) return next();
+  return res.sendFile(path.join(root, 'car.html'));
+});
+
+app.get('/car.html', (req, res) => {
+  const legacySlug = String(req.query.slug || '').trim().toLowerCase();
+  if (legacySlug && vehicleSlugPattern.test(legacySlug)) {
+    return res.redirect(301, `/autopark/${encodeURIComponent(legacySlug)}`);
+  }
+  return res.sendFile(path.join(root, 'car.html'));
+});
+
+for (const file of ["index.html", "about.html", "autopark.html"]) {
   const route = file === "index.html" ? ["/", "/index.html"] : `/${file}`;
   app.get(route, (_req, res) => res.sendFile(path.join(root, file)));
 }

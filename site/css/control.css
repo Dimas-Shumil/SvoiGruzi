@@ -484,3 +484,40 @@ img { display: block; max-width: 100%; }
 }
 .vehicle-gallery-editor__empty i { font-size: 20px; }
 @media (max-width: 760px) { .vehicle-gallery-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.partner-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.vehicle-gallery-editor__actions {
+  position: absolute;
+  inset: auto 7px 7px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.vehicle-gallery-editor__main {
+  min-height: 30px;
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  background: rgba(16, 22, 25, 0.84);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+.vehicle-gallery-editor__main.is-main {
+  background: rgba(119, 104, 79, 0.92);
+  cursor: default;
+}
+.vehicle-gallery-editor__actions .vehicle-gallery-editor__remove {
+  position: static;
+  flex: 0 0 30px;
+}
+@media (max-width: 760px) {
+  .partner-fields { grid-template-columns: 1fr; }
+  .vehicle-gallery-editor__main { font-size: 8px; }
+}

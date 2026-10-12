@@ -27,6 +27,7 @@ const env = Object.freeze({
   databaseUrl: process.env.DATABASE_URL || "file:./dev.db",
   sessionSecret: process.env.SESSION_SECRET || "",
   sessionDays: intValue(process.env.SESSION_DAYS, 14, 1, 30),
+  sessionIdleMinutes: intValue(process.env.SESSION_IDLE_MINUTES, 15, 5, 120),
   appOrigin: parseOrigin(process.env.APP_ORIGIN),
   trustProxy: process.env.TRUST_PROXY === "1" ? 1 : false,
   backupRetentionDays: intValue(process.env.BACKUP_RETENTION_DAYS, 30, 1, 365),

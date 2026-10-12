@@ -52,15 +52,33 @@
   }
 
   function vehicleCard(vehicle) {
-    const categories = String(vehicle.categories || "").split(",").map((item) => item.trim()).filter(Boolean);
-    if (vehicle.ownershipType === "PARTNER") categories.push("partner");
+    const rawCategories = String(vehicle.categories || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const categories = new Set(rawCategories.map((item) => item.toLowerCase()));
+    const bodyType = String(vehicle.bodyType || "").trim().toLowerCase();
+
+    // Фильтры каталога должны работать от данных, которые владелец реально
+    // заполняет в админке, а не требовать скрытых служебных значений.
+    if (bodyType.includes("фургон") || categories.has("фургон") || categories.has("фургоны") || categories.has("van")) {
+      categories.add("van");
+    }
+    if (categories.has("переезд") || categories.has("переезды") || categories.has("moving")) {
+      categories.add("moving");
+    }
+    if (categories.has("грузчики") || categories.has("с грузчиками") || categories.has("loaders")) {
+      categories.add("loaders");
+    }
+    if (vehicle.ownershipType === "PARTNER") categories.add("partner");
+
     const typeLabel = vehicle.ownershipType === "PARTNER"
       ? `Партнёрский транспорт${vehicle.bodyType ? ` · ${vehicle.bodyType}` : ""}`
       : vehicle.bodyType || "Грузовой автомобиль";
     const image = vehicle.previewImage || "/site/img/fleet-next.webp";
     const availability = vehicle.status === "AVAILABLE" ? "Доступна" : vehicle.status === "BUSY" ? "Занята" : "По запросу";
 
-    return `<article class="fleet-card" data-fleet-card data-category="${attr(categories.join(" "))}" data-fleet-reveal>
+    return `<article class="fleet-card" data-fleet-card data-category="${attr([...categories].join(" "))}" data-fleet-reveal>
       <div class="fleet-card__media"><img src="${attr(image)}" alt="${attr(`${vehicle.name} — Свои грузы`)}" loading="lazy" decoding="async" /></div>
       <div class="fleet-card__body">
         <div><p class="fleet-card__type">${escapeHtml(typeLabel)}</p><h3 class="fleet-card__title">${escapeHtml(vehicle.name)}</h3><p class="fleet-card__description">${escapeHtml(vehicle.shortDescription || "Подберём машину под вашу задачу и маршрут.")}</p></div>
@@ -70,7 +88,7 @@
           <div><dt>Длина кузова</dt><dd>${escapeHtml(formatLength(vehicle.bodyLengthM))}</dd></div>
           <div><dt>Доступность</dt><dd>${escapeHtml(availability)}</dd></div>
         </dl>
-        <a class="fleet-card__button" href="car.html?slug=${encodeURIComponent(vehicle.slug)}">Подробнее о машине</a>
+        <a class="fleet-card__button" href="/autopark/${encodeURIComponent(vehicle.slug)}">Подробнее о машине</a>
       </div>
     </article>`;
   }

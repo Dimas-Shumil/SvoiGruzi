@@ -9,7 +9,6 @@ const {
   normalizeSearch
 } = require("../lib/validation");
 const { upsertClient } = require("../services/client.service");
-const { recordActivity } = require("../lib/activity");
 const { sendNewRequestNotification } = require("../services/mail.service");
 
 const router = express.Router();
@@ -39,8 +38,8 @@ router.post("/", asyncRoute(async (req, res) => {
   }
 
   const clientName = personName(req.body.clientName, "Имя");
-  const pickupAddress = singleLineText(req.body.from, "Откуда", 300, false);
-  const destinationAddress = singleLineText(req.body.to, "Куда", 300, false);
+  const pickupAddress = singleLineText(req.body.from, "Откуда", 300, true);
+  const destinationAddress = singleLineText(req.body.to, "Куда", 300, true);
   const cargoCode = singleLineText(req.body.cargo, "Что перевозим", 80);
   const cargoType = cargoCode && Object.hasOwn(CARGO_LABELS, cargoCode)
     ? CARGO_LABELS[cargoCode]
@@ -97,18 +96,6 @@ router.post("/", asyncRoute(async (req, res) => {
         }
       }
     });
-  });
-
-  await recordActivity({
-    req,
-    action: "CREATE",
-    entityType: "ORDER",
-    entityId: order.id,
-    title: "Новая заявка с сайта",
-    metadata: {
-      vehicleOwnership: order.vehicleRecord?.ownershipType || null,
-      carrierId: order.vehicleRecord?.carrierId || null
-    }
   });
 
   // Письмо — дополнительный канал. Заявка уже находится в БД,
