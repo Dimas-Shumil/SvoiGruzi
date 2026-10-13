@@ -205,6 +205,63 @@
   function initFooter(component) {
     const year = component.querySelector("[data-footer-year]");
     if (year) year.textContent = new Date().getFullYear();
+
+    const actions = component.querySelector("[data-mobile-contact-actions]");
+    const callLink = component.querySelector("[data-mobile-call-link]");
+    const footer = component.querySelector(".site-footer");
+    const firstScene = document.querySelector("main > section:first-of-type");
+    if (!actions || !footer || !firstScene) return;
+
+    // Номер берётся из data-phone в components/footer.html.
+    const phone = String(actions.dataset.phone || "").trim();
+    if (callLink && phone) {
+      callLink.href = `tel:${phone.replace(/[^+\d]/g, "")}`;
+      callLink.setAttribute("aria-label", "Позвонить");
+    }
+
+    const mobile = window.matchMedia("(max-width: 767px)");
+    let frame = 0;
+
+    function updateMobileActions() {
+      frame = 0;
+
+      if (!mobile.matches) {
+        actions.classList.remove("is-visible");
+        actions.setAttribute("aria-hidden", "true");
+        actions.inert = true;
+        return;
+      }
+
+      const heroBottom = firstScene.getBoundingClientRect().bottom;
+      const footerTop = footer.getBoundingClientRect().top;
+
+      // Показываем после выхода с первого экрана.
+      // Скрываем чуть раньше, чем футер начнёт занимать экран.
+      const heroPassed = heroBottom <= 82;
+      const footerStarted = footerTop <= window.innerHeight - 18;
+      const visible = heroPassed && !footerStarted;
+
+      actions.classList.toggle("is-visible", visible);
+      actions.setAttribute("aria-hidden", String(!visible));
+      actions.inert = !visible;
+    }
+
+    function scheduleUpdate() {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateMobileActions);
+    }
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
+    mobile.addEventListener("change", scheduleUpdate);
+    updateMobileActions();
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      mobile.removeEventListener("change", scheduleUpdate);
+    };
   }
 
   class SiteHeader extends HTMLComponent {

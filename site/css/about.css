@@ -2363,3 +2363,67 @@ button:disabled {
     transition: none;
   }
 }
+
+/* Mobile quick contact actions */
+.mobile-contact-actions {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-contact-actions {
+    position: fixed;
+    z-index: 90;
+    right: 15px;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    display: grid;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+    pointer-events: none;
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mobile-contact-actions.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .mobile-contact-actions__button {
+    display: inline-flex;
+    width: 58px;
+    height: 58px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(198, 178, 142, 0.42);
+    border-radius: 50%;
+    background: rgba(248, 246, 239, 0.94);
+    box-shadow: 0 13px 34px rgba(9, 14, 18, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+    color: #4d4b46;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mobile-contact-actions__button svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .mobile-contact-actions__button:active {
+    transform: scale(0.94);
+  }
+  .mobile-contact-actions__button:focus-visible {
+    outline: 2px solid #c6b28e;
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-contact-actions,
+  .mobile-contact-actions__button {
+    transition: none;
+  }
+}
+
