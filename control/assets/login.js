@@ -33,7 +33,11 @@ form?.addEventListener('submit', async (event) => {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.message || 'Не удалось войти');
-    window.location.replace('/control/app.html#/dashboard');
+    const requestedOrder = new URLSearchParams(window.location.search).get('openOrder');
+    const safeOrder = requestedOrder && /^[1-9]\d{0,9}$/.test(requestedOrder) ? requestedOrder : null;
+    window.location.replace(safeOrder
+      ? `/control/app.html?openOrder=${safeOrder}#/requests?order=${safeOrder}`
+      : '/control/app.html#/dashboard');
   } catch (error) {
     errorBox.textContent = error.message;
     errorBox.hidden = false;

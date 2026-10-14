@@ -9,6 +9,7 @@ const vehiclesRoutes = require("./vehicles.control.routes");
 const tasksRoutes = require("./tasks.routes");
 const financesRoutes = require("./finances.routes");
 const uploadsRoutes = require("./uploads.routes");
+const pushRoutes = require("./push.routes");
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use("/vehicles", vehiclesRoutes);
 router.use("/tasks", tasksRoutes);
 router.use("/finances", financesRoutes);
 router.use("/uploads", uploadsRoutes);
+router.use("/push", pushRoutes);
 
 module.exports = router;

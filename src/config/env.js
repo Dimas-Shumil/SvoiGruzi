@@ -32,12 +32,9 @@ const env = Object.freeze({
   trustProxy: process.env.TRUST_PROXY === "1" ? 1 : false,
   backupRetentionDays: intValue(process.env.BACKUP_RETENTION_DAYS, 30, 1, 365),
 
-  smtpHost: String(process.env.SMTP_HOST || "").trim(),
-  smtpPort: intValue(process.env.SMTP_PORT, 465, 1, 65535),
-  smtpSecure: String(process.env.SMTP_SECURE || "true").toLowerCase() === "true",
-  smtpUser: String(process.env.SMTP_USER || "").trim(),
-  smtpPass: String(process.env.SMTP_PASS || ""),
-  toEmail: String(process.env.TO_EMAIL || "").trim(),
+  vapidPublicKey: String(process.env.VAPID_PUBLIC_KEY || "").trim(),
+  vapidPrivateKey: String(process.env.VAPID_PRIVATE_KEY || "").trim(),
+  vapidSubject: String(process.env.VAPID_SUBJECT || "").trim(),
 
   isProduction: process.env.NODE_ENV === "production"
 });
@@ -63,12 +60,17 @@ function validateEnv() {
     }
   }
 
-  const smtpValues = [env.smtpHost, env.smtpUser, env.smtpPass, env.toEmail];
-  const configuredCount = smtpValues.filter(Boolean).length;
-  if (configuredCount > 0 && configuredCount < smtpValues.length) {
-    throw new Error(
-      "SMTP настроен не полностью: заполните SMTP_HOST, SMTP_USER, SMTP_PASS и TO_EMAIL"
-    );
+  const pushValues = [env.vapidPublicKey, env.vapidPrivateKey, env.vapidSubject];
+  const configuredCount = pushValues.filter(Boolean).length;
+  if (configuredCount > 0 && configuredCount < pushValues.length) {
+    throw new Error("Web Push настроен частично: заполните все VAPID_* переменные");
+  }
+  if (configuredCount === pushValues.length) {
+    if (!/^[A-Za-z0-9_-]{80,100}$/.test(env.vapidPublicKey) ||
+        !/^[A-Za-z0-9_-]{35,80}$/.test(env.vapidPrivateKey) ||
+        !/^(mailto:[^\s@]+@[^\s@]+\.[^\s@]+|https:\/\/[^\s]+)$/.test(env.vapidSubject)) {
+      throw new Error("Некорректные VAPID-ключи или VAPID_SUBJECT");
+    }
   }
 }
 

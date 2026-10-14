@@ -831,16 +831,90 @@ function openExpenseForm() {
   });
 }
 
+// Native Web Push: subscription is always activated by a direct user click.
+const pushSupported = () => Boolean(window.isSecureContext &&
+  ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window));
+
+function vapidToBytes(base64Url) {
+  const encoded = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '='));
+  return Uint8Array.from(raw, (character) => character.charCodeAt(0));
+}
+
+async function pushRegistration() {
+  return navigator.serviceWorker.register('/control/push-sw.js', { scope: '/control/' });
+}
+
+async function pushSubscription() {
+  if (!pushSupported()) return null;
+  const registration = await pushRegistration();
+  return registration.pushManager.getSubscription();
+}
+
+async function enablePush() {
+  if (!pushSupported()) throw new Error('Уведомления не поддерживаются этим браузером или требуется HTTPS.');
+  // Permission must be requested immediately inside a trusted click handler.
+  const permission = await Notification.requestPermission();
+  if (permission !== 'granted') throw new Error('Разрешите уведомления для сайта в настройках браузера.');
+  const status = await api('/push/status');
+  if (!status.configured || !status.publicKey) throw new Error('Добавьте VAPID-ключи на сервере.');
+  const registration = await pushRegistration();
+  let subscription = await registration.pushManager.getSubscription();
+  if (subscription) {
+    const existingKey = subscription.options?.applicationServerKey;
+    const expected = vapidToBytes(status.publicKey);
+    if (existingKey && (existingKey.byteLength !== expected.byteLength ||
+      !new Uint8Array(existingKey).every((v, i) => v === expected[i]))) {
+      await subscription.unsubscribe();
+      subscription = null;
+    }
+  }
+  if (!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: vapidToBytes(status.publicKey)
+    });
+  }
+  await api('/push/subscribe', { method: 'POST', body: subscription.toJSON() });
+}
+
+async function disablePush() {
+  const subscription = await pushSubscription();
+  if (subscription) {
+    await api('/push/subscribe', { method: 'DELETE', body: { endpoint: subscription.endpoint } });
+    await subscription.unsubscribe();
+  }
+}
+
 async function renderSettings() {
-  app.innerHTML = `<div class="page">${pageHeader('Настройки', 'Раздел платформы')}<section class="panel notification-soon"><div class="notification-soon__icon"><i class="ti ti-bell"></i></div><div><span class="control-eyebrow">В разработке</span><h2>Уведомления скоро появятся</h2><p>Здесь будет управление уведомлениями по новым заявкам и важным событиям.</p></div></section></div>`;
+  const status = await api('/push/status');
+  const available = pushSupported();
+  let subscribed = false;
+  if (available) {
+    try { subscribed = Boolean(await pushSubscription()); } catch { subscribed = false; }
+  }
+  const blocked = available && Notification.permission === 'denied';
+  const enabled = available && status.configured && !blocked;
+  const explanation = !window.isSecureContext ? 'Web Push работает по HTTPS (или localhost).'
+    : !available ? 'Этот браузер не поддерживает Web Push. На iPhone установите приложение на экран «Домой» через Safari (iOS 16.4+).'
+    : !status.configured ? 'На сервере пока нет VAPID-ключей. Укажите их в .env и перезапустите PM2.'
+    : blocked ? 'Уведомления заблокированы. Разрешите их в настройках браузера.'
+    : subscribed ? 'Это устройство подписано на уведомления о новых заявках.'
+    : 'Разрешите уведомления на каждом устройстве, где вы работаете с админкой.';
+  app.innerHTML = `<div class="page">${pageHeader('Настройки', 'Уведомления и устройства')}
+    <section class="panel push-settings"><div class="push-settings__header"><div class="push-settings__symbol"><i class="ti ti-bell"></i></div><div><span class="control-eyebrow">Новые заявки</span><h2>Web Push уведомления</h2><p>${escapeHtml(explanation)}</p></div></div>
+    <div class="push-settings__meta">${badge(status.configured ? 'Сервер настроен' : 'Сервер не настроен', status.configured ? 'green' : 'orange')}${badge(subscribed ? 'Устройство подключено' : 'Устройство не подключено', subscribed ? 'green' : 'orange')}<span>Ваших подписок: ${Number(status.subscriptions) || 0}</span></div>
+    <div class="push-settings__actions"><button type="button" class="control-button control-button--primary" data-action="push-enable" ${(!enabled || subscribed) ? 'disabled' : ''}><i class="ti ti-bell-ringing"></i> Включить</button><button type="button" class="control-button" data-action="push-test" ${(!enabled || !subscribed) ? 'disabled' : ''}>Проверить</button><button type="button" class="control-button" data-action="push-disable" ${(!enabled || !subscribed) ? 'disabled' : ''}>Отключить на этом устройстве</button></div>
+    <p class="push-settings__note">Push приходит при новой заявке с сайта. Нажатие открывает соответствующую заявку в CRM. Для iPhone: «Поделиться» → «На экран Домой» → запустить приложение и включить здесь.</p>
+    </section></div>`;
 }
 
 function renderMore() {
-  app.innerHTML = `<div class="page">${pageHeader('Ещё', 'Дополнительные разделы')}<section class="more-grid"><a class="more-link" href="#/fleet"><i class="ti ti-truck"></i><span><b>Автопарк</b><small>Машины и публикация</small></span></a><a class="more-link" href="#/tasks"><i class="ti ti-checklist"></i><span><b>Задачи</b><small>Дела и напоминания</small></span></a><a class="more-link" href="#/finances"><i class="ti ti-wallet"></i><span><b>Финансы</b><small>Доходы и расходы</small></span></a><a class="more-link" href="#/settings"><i class="ti ti-bell"></i><span><b>Уведомления</b><small>Скоро появятся</small></span></a><button class="more-link" data-action="logout"><i class="ti ti-logout"></i><span><b>Выйти</b><small>Завершить сессию</small></span></button></section></div>`;
+  app.innerHTML = `<div class="page">${pageHeader('Ещё', 'Дополнительные разделы')}<section class="more-grid"><a class="more-link" href="#/fleet"><i class="ti ti-truck"></i><span><b>Автопарк</b><small>Машины и публикация</small></span></a><a class="more-link" href="#/tasks"><i class="ti ti-checklist"></i><span><b>Задачи</b><small>Дела и напоминания</small></span></a><a class="more-link" href="#/finances"><i class="ti ti-wallet"></i><span><b>Финансы</b><small>Доходы и расходы</small></span></a><a class="more-link" href="#/settings"><i class="ti ti-bell"></i><span><b>Уведомления</b><small>Включить Web Push</small></span></a><button class="more-link" data-action="logout"><i class="ti ti-logout"></i><span><b>Выйти</b><small>Завершить сессию</small></span></button></section></div>`;
 }
 
 function currentRoute() {
-  return window.location.hash.replace(/^#\//, '').split('/')[0] || 'dashboard';
+  return window.location.hash.replace(/^#\//, '').split('/')[0].split('?')[0] || 'dashboard';
 }
 
 async function renderCurrentRoute() {
@@ -849,7 +923,13 @@ async function renderCurrentRoute() {
   app.setAttribute('aria-busy', 'true');
   try {
     if (route === 'dashboard') await renderDashboard();
-    else if (route === 'requests') await renderRequests();
+    else if (route === 'requests') {
+      await renderRequests();
+      const orderId = new URLSearchParams(window.location.hash.split('?')[1] || '').get('order');
+      if (orderId && /^[1-9]\d{0,9}$/.test(orderId)) {
+        try { await showRequest(Number(orderId)); } catch (error) { toast(error.message, 'error'); }
+      }
+    }
     else if (route === 'clients') await renderClients();
     else if (route === 'fleet') await renderFleet();
     else if (route === 'tasks') await renderTasks();
@@ -880,6 +960,18 @@ document.addEventListener('click', async (event) => {
   if (action === 'new-vehicle') { await openVehicleForm(); return; }
   if (action === 'new-task') { openTaskForm(); return; }
   if (action === 'new-expense') { openExpenseForm(); return; }
+  if (['push-enable', 'push-disable', 'push-test'].includes(action)) {
+    const button = event.target.closest('[data-action]');
+    if (button?.disabled) return;
+    button.disabled = true;
+    try {
+      if (action === 'push-enable') { await enablePush(); toast('Уведомления включены на этом устройстве'); }
+      else if (action === 'push-disable') { await disablePush(); toast('Уведомления отключены на этом устройстве'); }
+      else { const result = await api('/push/test', { method: 'POST', body: {} }); toast(`Тест отправлен: ${result.sent} устройствам`); }
+      await renderSettings();
+    } catch (error) { toast(error.message, 'error'); button.disabled = false; }
+    return;
+  }
   if (action === 'logout') { await logout(); return; }
   if (action === 'export-csv') {
     const range = monthRange();

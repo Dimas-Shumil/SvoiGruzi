@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 
 const prisma = require("./src/lib/prisma");
+const { sitemap, vehicleHtml } = require("./src/services/seo.service");
+const { asyncRoute } = require("./src/lib/async-route");
 const { env, validateEnv } = require("./src/config/env");
 const { loadSession } = require("./src/middleware/auth");
 const { verifyOrigin } = require("./src/middleware/origin");
@@ -13,7 +15,6 @@ const { notFound, errorHandler } = require("./src/middleware/error-handler");
 const controlRoutes = require("./src/routes/control.routes");
 const publicOrdersRoutes = require("./src/routes/public-orders.routes");
 const publicVehiclesRoutes = require("./src/routes/vehicles.public.routes");
-const { verifyMailConnection } = require("./src/services/mail.service");
 
 validateEnv();
 
@@ -118,27 +119,42 @@ app.get("/site/offer.html", (_req, res) => res.sendFile(path.join(root, "site", 
 
 const vehicleSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-app.get('/autopark/:slug', (req, res, next) => {
+// Published vehicles have their own SEO URL and server-rendered HTML.
+app.get('/autopark/:slug', asyncRoute(async (req, res, next) => {
   const slug = String(req.params.slug || '').trim().toLowerCase();
   if (!vehicleSlugPattern.test(slug)) return next();
-  return res.sendFile(path.join(root, 'car.html'));
-});
+  const vehicle = await prisma.vehicle.findUnique({ where: { slug }, select: {
+    name: true, slug: true, published: true, shortDescription: true, description: true,
+    previewImage: true, capacityKg: true, volumeM3: true, bodyType: true, serviceArea: true
+  }});
+  if (!vehicle?.published) return res.status(404).send('Машина не найдена');
+  res.set('Cache-Control', 'public, max-age=60');
+  res.type('html').send(vehicleHtml(vehicle));
+}));
 
 app.get('/car.html', (req, res) => {
   const legacySlug = String(req.query.slug || '').trim().toLowerCase();
   if (legacySlug && vehicleSlugPattern.test(legacySlug)) {
     return res.redirect(301, `/autopark/${encodeURIComponent(legacySlug)}`);
   }
-  return res.sendFile(path.join(root, 'car.html'));
+  return res.redirect(301, '/autopark.html');
 });
 
-for (const file of ["index.html", "about.html", "autopark.html"]) {
-  const route = file === "index.html" ? ["/", "/index.html"] : `/${file}`;
-  app.get(route, (_req, res) => res.sendFile(path.join(root, file)));
+app.get('/index.html', (_req, res) => res.redirect(301, '/'));
+app.get('/', (_req, res) => res.sendFile(path.join(root, 'index.html')));
+for (const file of ['about.html', 'autopark.html']) {
+  app.get(`/${file}`, (_req, res) => res.sendFile(path.join(root, file)));
 }
 
-app.get("/robots.txt", (_req, res) => res.sendFile(path.join(root, "robots.txt")));
-app.get("/sitemap.xml", (_req, res) => res.sendFile(path.join(root, "sitemap.xml")));
+app.get('/favicon.ico', (_req, res) => res.sendFile(path.join(root, 'favicon.ico')));
+app.get('/robots.txt', (_req, res) => res.sendFile(path.join(root, 'robots.txt')));
+app.get('/sitemap.xml', asyncRoute(async (_req, res) => {
+  const vehicles = await prisma.vehicle.findMany({
+    where: { published: true }, select: { slug: true, updatedAt: true }, orderBy: { slug: 'asc' }
+  });
+  res.set('Cache-Control', 'public, max-age=300');
+  res.type('application/xml').send(sitemap(vehicles));
+}));
 
 // Control: HTML приложения нельзя получить без действующей сессии.
 app.use("/control", (_req, res, next) => {
@@ -163,15 +179,29 @@ app.use("/control/assets", express.static(path.join(root, "control", "assets"), 
 app.get("/control/manifest.webmanifest", (_req, res) => {
   res.sendFile(path.join(root, "control", "manifest.webmanifest"));
 });
+// Scope is restricted to /control/, no public-site cache/fetch interception.
+app.get("/control/push-sw.js", (_req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.type("application/javascript").sendFile(path.join(root, "control", "push-sw.js"));
+});
 app.get(["/control", "/control/"], (req, res) => {
   res.redirect(req.user ? "/control/app.html" : "/control/login.html");
 });
 app.get("/control/login.html", (req, res) => {
-  if (req.user) return res.redirect("/control/app.html");
+  if (req.user) {
+    const orderId = String(req.query.openOrder || '');
+    return res.redirect(/^[1-9]\d{0,9}$/.test(orderId)
+      ? `/control/app.html?openOrder=${orderId}#/requests?order=${orderId}`
+      : "/control/app.html");
+  }
   return res.sendFile(path.join(root, "control", "login.html"));
 });
 app.get("/control/app.html", (req, res) => {
-  if (!req.user) return res.redirect("/control/login.html");
+  if (!req.user) {
+    const orderId = String(req.query.openOrder || '');
+    return res.redirect(/^[1-9]\d{0,9}$/.test(orderId)
+      ? `/control/login.html?openOrder=${orderId}` : "/control/login.html");
+  }
   return res.sendFile(path.join(root, "control", "app.html"));
 });
 
@@ -193,9 +223,7 @@ if (require.main === module) {
   const server = app.listen(env.port, env.host, () => {
     console.log(`Свои грузы: ${env.appOrigin || `http://localhost:${env.port}`}`);
 
-    verifyMailConnection().catch((error) => {
-      console.error("Ошибка проверки SMTP:", error.message);
-    });
+
   });
 
   const shutdown = (signal) => {

@@ -9,7 +9,7 @@ const {
   normalizeSearch
 } = require("../lib/validation");
 const { upsertClient } = require("../services/client.service");
-const { sendNewRequestNotification } = require("../services/mail.service");
+const { sendNewOrderNotification } = require("../services/push.service");
 
 const router = express.Router();
 
@@ -98,10 +98,9 @@ router.post("/", asyncRoute(async (req, res) => {
     });
   });
 
-  // Письмо — дополнительный канал. Заявка уже находится в БД,
-  // поэтому сбой SMTP не влияет на ответ клиенту.
-  sendNewRequestNotification(order).catch((error) => {
-    console.error("Не удалось отправить email по новой заявке:", error.message);
+  // Заявка уже записана в SQLite; доставка push не блокирует ответ клиенту.
+  sendNewOrderNotification(order).catch((error) => {
+    console.error("Не удалось отправить Web Push:", error.message);
   });
 
   return res.status(201).json({

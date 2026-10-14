@@ -1,3 +1,7 @@
 User-agent: *
-Disallow: /control/
+Allow: /
+Allow: /api/vehicles
 Disallow: /api/
+Disallow: /control/
+Disallow: /site/sass/
+Sitemap: https://svoi-perevozki.ru/sitemap.xml

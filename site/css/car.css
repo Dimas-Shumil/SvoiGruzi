@@ -2746,3 +2746,4 @@ button:disabled {
     transition: none;
   }
 }
+.site-footer__phone{display:inline-block;margin:12px 0;font-size:clamp(19px,2vw,25px);font-weight:750;letter-spacing:-.025em;color:#f8f8f6;transition:opacity .3s ease}.site-footer__phone:hover{opacity:.72}
