@@ -26,7 +26,7 @@
 
   // Hash-ссылки общих компонентов относятся к секциям главной.
   // На внутренних страницах #contacts остаётся локальным для футера,
-  // остальные якоря общего компонента ведём обратно на index.html.
+  // остальные якоря общего компонента ведём на корневой маршрут /.
   function normalizeLinks(component) {
     const isAbout = document.body.classList.contains("page-about");
     const isAutopark = document.body.classList.contains("page-autopark");
@@ -44,17 +44,17 @@
         return;
       }
 
-      link.setAttribute("href", `index.html${hash}`);
+      link.setAttribute("href", `/${hash}`);
     });
 
     if (isAbout) {
-      component.querySelectorAll('a[href="about.html"]').forEach((link) => {
+      component.querySelectorAll('a[href="/about.html"]').forEach((link) => {
         link.setAttribute("aria-current", "page");
       });
     }
 
     if (isAutopark || isCar) {
-      component.querySelectorAll('a[href="autopark.html"]').forEach((link) => {
+      component.querySelectorAll('a[href="/autopark.html"]').forEach((link) => {
         link.setAttribute("aria-current", "page");
       });
     }

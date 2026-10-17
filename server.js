@@ -140,7 +140,8 @@ app.get('/car.html', (req, res) => {
   return res.redirect(301, '/autopark.html');
 });
 
-app.get('/index.html', (_req, res) => res.redirect(301, '/'));
+// Сохраняем query-параметры старых ссылок /index.html (в том числе выбранную машину).
+app.get('/index.html', (req, res) => res.redirect(301, req.originalUrl.replace(/^\/index\.html(?=\?|$)/, '/')));
 app.get('/', (_req, res) => res.sendFile(path.join(root, 'index.html')));
 for (const file of ['about.html', 'autopark.html']) {
   app.get(`/${file}`, (_req, res) => res.sendFile(path.join(root, file)));

@@ -60,6 +60,7 @@ function vehicleHtml(vehicle) {
   template=template.replace(/<title>[^<]*<\/title>/, `<title>${htmlEscape(title)}</title>`);
   template=template.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/,`<meta name="description" content="${htmlEscape(short)}" />`);
   template=template.replace('  </head>',meta+'  </head>');
+  template=template.replace('href="/#calculator"', `href="/?vehicle=${encodeURIComponent(vehicle.slug)}#calculator"`);
   template=template.replace('id="car-title">Автомобиль</h1>',`id="car-title">${htmlEscape(name)}</h1>`);
   template=template.replace('<span aria-current="page">Автомобиль</span>',`<span aria-current="page">${htmlEscape(name)}</span>`);
   template=template.replace('Данные автомобиля загружаются из автопарка.',htmlEscape(short));

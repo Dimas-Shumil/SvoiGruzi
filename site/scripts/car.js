@@ -128,7 +128,7 @@
     if (facts) facts.innerHTML = `<div class="car-facts__item"><dt>Грузоподъёмность</dt><dd>${escapeHtml(formatCapacity(vehicle.capacityKg))}</dd></div><div class="car-facts__item"><dt>Объём кузова</dt><dd>${escapeHtml(formatVolume(vehicle.volumeM3))}</dd></div><div class="car-facts__item"><dt>Тип кузова</dt><dd>${escapeHtml(vehicle.bodyType || "—")}</dd></div><div class="car-facts__item"><dt>Зона работы</dt><dd>${escapeHtml(vehicle.serviceArea || "—")}</dd></div>`;
 
     const primary = document.querySelector('.car-card__button--primary');
-    if (primary) primary.href = `index.html?vehicle=${encodeURIComponent(vehicle.slug)}#calculator`;
+    if (primary) primary.href = `/?vehicle=${encodeURIComponent(vehicle.slug)}#calculator`;
 
     const specs = document.querySelector('.car-spec-table');
     if (specs) {
