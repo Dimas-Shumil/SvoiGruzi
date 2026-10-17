@@ -686,6 +686,20 @@ site-footer {
     transition: none;
   }
 }
+.site-footer__phone {
+  display: inline-block;
+  margin: 12px 0;
+  font-size: clamp(19px, 2vw, 25px);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: #f8f8f6;
+  transition: opacity 0.3s ease;
+}
+
+.site-footer__phone:hover {
+  opacity: 0.72;
+}
+
 *,
 *::before,
 *::after {
@@ -2079,6 +2093,85 @@ button:disabled {
   background-size: 16px 16px;
 }
 
+.seo-faq {
+  background: #f4f3ef;
+  color: #171c1e;
+  padding: 104px 0 120px;
+}
+
+.seo-faq__container {
+  max-width: 1250px;
+}
+
+.seo-faq__eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #666d70;
+  margin-bottom: 18px;
+}
+
+.seo-faq__title {
+  font-size: clamp(32px, 4.2vw, 58px);
+  line-height: 1.07;
+  margin-bottom: 42px;
+  letter-spacing: -0.035em;
+}
+
+.seo-faq__items {
+  border-top: 1px solid rgba(23, 28, 30, 0.16);
+}
+
+.seo-faq__item {
+  border-bottom: 1px solid rgba(23, 28, 30, 0.16);
+}
+
+.seo-faq__item summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 650;
+  padding: 24px 44px 24px 0;
+  font-size: clamp(16px, 1.4vw, 20px);
+  position: relative;
+}
+
+.seo-faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.seo-faq__item summary::after {
+  content: "+";
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.seo-faq__item[open] summary::after {
+  content: "−";
+}
+
+.seo-faq__item p {
+  max-width: 750px;
+  padding: 0 0 25px;
+  color: #666d70;
+  line-height: 1.7;
+}
+
+@media (max-width: 767px) {
+  .seo-faq {
+    padding: 72px 0 88px;
+  }
+  .seo-faq__title {
+    margin-bottom: 26px;
+  }
+  .seo-faq__item summary {
+    padding-block: 19px;
+  }
+}
 .page-car {
   background: #f4f3ef;
   color: #171c1e;
@@ -2746,4 +2839,3 @@ button:disabled {
     transition: none;
   }
 }
-.site-footer__phone{display:inline-block;margin:12px 0;font-size:clamp(19px,2vw,25px);font-weight:750;letter-spacing:-.025em;color:#f8f8f6;transition:opacity .3s ease}.site-footer__phone:hover{opacity:.72}

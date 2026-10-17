@@ -2664,12 +2664,69 @@ img {
   }
 }
 /* Web Push panel */
-.push-settings{padding:28px;display:grid;gap:22px}
-.push-settings__header{display:flex;align-items:flex-start;gap:18px}
-.push-settings__header h2{margin:4px 0 9px;font-size:clamp(20px,2.6vw,27px)}
-.push-settings__header p,.push-settings__note{color:var(--color-muted,#819096);font-size:14px;line-height:1.65}
-.push-settings__symbol{display:grid;place-items:center;flex:0 0 55px;height:55px;border:1px solid rgba(128,142,150,.2);border-radius:16px;font-size:27px}
-.push-settings__meta,.push-settings__actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
-.push-settings__meta>span:last-child{font-size:13px;opacity:.75}
-.push-settings__actions .control-button:disabled{opacity:.5;cursor:not-allowed}
-@media(max-width:640px){.push-settings{padding:18px}.push-settings__header{gap:12px}.push-settings__symbol{flex-basis:44px;height:44px}.push-settings__actions .control-button{width:100%;justify-content:center}}
+.push-settings {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.push-settings__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.push-settings__header h2 {
+  margin: 4px 0 9px;
+  font-size: clamp(20px, 2.6vw, 27px);
+}
+
+.push-settings__header p, .push-settings__note {
+  color: var(--color-muted, #819096);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.push-settings__symbol {
+  display: grid;
+  place-items: center;
+  flex: 0 0 55px;
+  height: 55px;
+  border: 1px solid rgba(128, 142, 150, 0.2);
+  border-radius: 16px;
+  font-size: 27px;
+}
+
+.push-settings__meta, .push-settings__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.push-settings__meta > span:last-child {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.push-settings__actions .control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .push-settings {
+    padding: 18px;
+  }
+  .push-settings__header {
+    gap: 12px;
+  }
+  .push-settings__symbol {
+    flex-basis: 44px;
+    height: 44px;
+  }
+  .push-settings__actions .control-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
