@@ -34,7 +34,7 @@ async function deliver(subscriptions, payload, ttl = 3600) {
       if (error.statusCode === 404 || error.statusCode === 410) {
         await prisma.pushSubscription.deleteMany({ where: { id: sub.id } }).catch(() => {});
       } else {
-        console.error("Web Push СВОИ ГРУЗЫ:", String(error.message || error).slice(0, 240));
+        console.error("Web Push СВОИ ПЕРЕВОЗКИ:", String(error.message || error).slice(0, 240));
       }
       return 0;
     }
@@ -54,7 +54,7 @@ async function sendNewOrderNotification(order) {
   const cargo = String(order.cargoType || "Грузоперевозка").slice(0, 70);
   // No phone or route/address in system lock-screen notifications.
   return deliver(subs, makePayload({
-    title: `СВОИ ГРУЗЫ · Новая заявка №${order.id}`,
+    title: `СВОИ ПЕРЕВОЗКИ · Новая заявка №${order.id}`,
     body: `${cargo}. Откройте заявку в панели управления.`,
     id: order.id,
   }));
@@ -66,7 +66,7 @@ async function sendTestNotification(userId) {
     where: { userId }, select: { id: true, endpoint: true, p256dh: true, auth: true },
   });
   return deliver(subs, makePayload({
-    title: "СВОИ ГРУЗЫ · Проверка Web Push",
+    title: "СВОИ ПЕРЕВОЗКИ · Проверка Web Push",
     body: "Уведомления настроены. Новые заявки будут появляться здесь.",
     test: true,
   }), 300);

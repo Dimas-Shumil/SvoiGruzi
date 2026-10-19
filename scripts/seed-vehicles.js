@@ -27,10 +27,10 @@ async function main() {
         sortOrder: 10
       },
       images: [
-        ["/site/img/car-next-main.webp", "Газель NEXT 4.2 м компании Свои грузы"],
+        ["/site/img/car-next-main.webp", "Газель NEXT 4.2 м компании Свои перевозки"],
         ["/site/img/car-next-side.webp", "Газель NEXT, вид сбоку"],
         ["/site/img/car-next-night.webp", "Газель NEXT в вечернее время"],
-        ["/site/img/car-next-brand.webp", "Фирменная графика Свои грузы на кузове автомобиля"]
+        ["/site/img/car-next-brand.webp", "Фирменная графика Свои перевозки на кузове автомобиля"]
       ]
     },
     {
@@ -54,7 +54,7 @@ async function main() {
         published: true,
         sortOrder: 20
       },
-      images: [["/site/img/fleet-tent.webp", "Тентованный фургон компании Свои грузы"]]
+      images: [["/site/img/fleet-tent.webp", "Тентованный фургон компании Свои перевозки"]]
     },
     {
       data: {
@@ -77,7 +77,7 @@ async function main() {
         published: true,
         sortOrder: 30
       },
-      images: [["/site/img/fleet-board.webp", "Бортовая Газель компании Свои грузы"]]
+      images: [["/site/img/fleet-board.webp", "Бортовая Газель компании Свои перевозки"]]
     }
   ];
 

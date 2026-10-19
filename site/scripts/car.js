@@ -112,7 +112,7 @@
   }
 
   function updateVehicle(vehicle) {
-    document.title = `${vehicle.name} — Свои грузы | Автопарк`;
+    document.title = `${vehicle.name} — Свои перевозки | Автопарк`;
     const description = vehicle.shortDescription || vehicle.description || `${vehicle.name} для грузоперевозок по Абакану и Хакасии.`;
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
     const currentCrumb = document.querySelector('.car-breadcrumbs [aria-current="page"]');
@@ -156,7 +156,7 @@
       cargoList.hidden = items.length === 0;
     }
     const cargoImage = document.querySelector('.car-cargo__visual img');
-    if (cargoImage && vehicle.previewImage) { cargoImage.src = vehicle.previewImage; cargoImage.alt = `${vehicle.name} — Свои грузы`; }
+    if (cargoImage && vehicle.previewImage) { cargoImage.src = vehicle.previewImage; cargoImage.alt = `${vehicle.name} — Свои перевозки`; }
 
     buildGallery(vehicle);
   }

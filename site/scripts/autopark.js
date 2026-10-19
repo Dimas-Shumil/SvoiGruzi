@@ -79,7 +79,7 @@
     const availability = vehicle.status === "AVAILABLE" ? "Доступна" : vehicle.status === "BUSY" ? "Занята" : "По запросу";
 
     return `<article class="fleet-card" data-fleet-card data-category="${attr([...categories].join(" "))}" data-fleet-reveal>
-      <div class="fleet-card__media"><img src="${attr(image)}" alt="${attr(`${vehicle.name} — Свои грузы`)}" loading="lazy" decoding="async" /></div>
+      <div class="fleet-card__media"><img src="${attr(image)}" alt="${attr(`${vehicle.name} — Свои перевозки`)}" loading="lazy" decoding="async" /></div>
       <div class="fleet-card__body">
         <div><p class="fleet-card__type">${escapeHtml(typeLabel)}</p><h3 class="fleet-card__title">${escapeHtml(vehicle.name)}</h3><p class="fleet-card__description">${escapeHtml(vehicle.shortDescription || "Подберём машину под вашу задачу и маршрут.")}</p></div>
         <dl class="fleet-card__specs">

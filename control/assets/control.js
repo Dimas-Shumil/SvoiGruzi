@@ -174,7 +174,7 @@ function emptyState(icon, title, textValue = '') {
 }
 
 function pageHeader(title, subtitle, actions = '') {
-  return `<header class="page-header"><div><span class="control-eyebrow">СВОИ ГРУЗЫ</span><h1>${escapeHtml(title)}</h1>${subtitle ? `<p>${escapeHtml(subtitle)}</p>` : ''}</div><div class="page-header__actions">${actions}</div></header>`;
+  return `<header class="page-header"><div><span class="control-eyebrow">СВОИ ПЕРЕВОЗКИ</span><h1>${escapeHtml(title)}</h1>${subtitle ? `<p>${escapeHtml(subtitle)}</p>` : ''}</div><div class="page-header__actions">${actions}</div></header>`;
 }
 
 function setActiveNav(route) {
@@ -185,7 +185,7 @@ function openModal(title, body, footer = '', wide = false) {
   if (!modalRoot.firstElementChild) {
     modalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   }
-  modalRoot.innerHTML = `<div class="modal-backdrop" data-modal-backdrop><section class="modal${wide ? ' modal--wide' : ''}" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1"><header class="modal__header"><div><span class="control-eyebrow">СВОИ ГРУЗЫ</span><h2 id="modal-title">${escapeHtml(title)}</h2></div><button class="icon-button" type="button" data-close-modal aria-label="Закрыть"><i class="ti ti-x"></i></button></header><div class="modal__body">${body}</div>${footer ? `<footer class="modal__footer">${footer}</footer>` : ''}</section></div>`;
+  modalRoot.innerHTML = `<div class="modal-backdrop" data-modal-backdrop><section class="modal${wide ? ' modal--wide' : ''}" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1"><header class="modal__header"><div><span class="control-eyebrow">СВОИ ПЕРЕВОЗКИ</span><h2 id="modal-title">${escapeHtml(title)}</h2></div><button class="icon-button" type="button" data-close-modal aria-label="Закрыть"><i class="ti ti-x"></i></button></header><div class="modal__body">${body}</div>${footer ? `<footer class="modal__footer">${footer}</footer>` : ''}</section></div>`;
   document.body.classList.add('is-modal-open');
   appShell?.setAttribute('inert', '');
   const modal = modalRoot.querySelector('.modal');

@@ -1,6 +1,6 @@
 {
-  "name": "СВОИ ГРУЗЫ — управление",
-  "short_name": "СВОИ ГРУЗЫ",
+  "name": "СВОИ ПЕРЕВОЗКИ — управление",
+  "short_name": "СВОИ ПЕРЕВОЗКИ",
   "start_url": "/control/app.html#/dashboard",
   "display": "standalone",
   "background_color": "#101619",

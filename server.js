@@ -222,7 +222,7 @@ app.use(errorHandler);
 
 if (require.main === module) {
   const server = app.listen(env.port, env.host, () => {
-    console.log(`Свои грузы: ${env.appOrigin || `http://localhost:${env.port}`}`);
+    console.log(`Свои перевозки: ${env.appOrigin || `http://localhost:${env.port}`}`);
 
 
   });

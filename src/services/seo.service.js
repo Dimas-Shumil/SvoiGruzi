@@ -32,7 +32,7 @@ function vehicleHtml(vehicle) {
   const name = String(vehicle.name || 'Автомобиль').slice(0, 130);
   const short = String(vehicle.shortDescription || vehicle.description || `${name} для грузоперевозок по Абакану и Хакасии.`).replace(/\s+/g,' ').trim().slice(0, 220);
   const canonical = `${BASE}/autopark/${encodeURIComponent(vehicle.slug)}`;
-  const title = `${name} — грузоперевозки в Абакане | СВОИ ГРУЗЫ`;
+  const title = `${name} — грузоперевозки в Абакане | СВОИ ПЕРЕВОЗКИ`;
   const image = vehicle.previewImage && /^\/site\/img\/[a-zA-Z0-9/_.-]+$/.test(vehicle.previewImage)
     ? BASE + vehicle.previewImage : BASE + '/site/img/autopark-hero.webp';
   const graph = {
@@ -50,7 +50,7 @@ function vehicleHtml(vehicle) {
     `    <link rel="icon" href="/favicon.ico" sizes="any" />\n`+
     `    <meta property="og:locale" content="ru_RU" />\n`+
     `    <meta property="og:type" content="website" />\n`+
-    `    <meta property="og:site_name" content="СВОИ ГРУЗЫ" />\n`+
+    `    <meta property="og:site_name" content="СВОИ ПЕРЕВОЗКИ" />\n`+
     `    <meta property="og:title" content="${htmlEscape(title)}" />\n`+
     `    <meta property="og:description" content="${htmlEscape(short)}" />\n`+
     `    <meta property="og:image" content="${htmlEscape(image)}" />\n`+
