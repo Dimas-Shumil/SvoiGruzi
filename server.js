@@ -109,6 +109,16 @@ const publicStatic = {
   }
 };
 
+// Public PWA resources; the control panel keeps its own worker and scope.
+app.get('/manifest.webmanifest', (_req, res) => {
+  res.set('Cache-Control', 'no-cache');
+  res.type('application/manifest+json').sendFile(path.join(root, 'manifest.webmanifest'));
+});
+app.get('/pwa-sw.js', (_req, res) => {
+  res.set({'Cache-Control': 'no-cache', 'Service-Worker-Allowed': '/'});
+  res.type('application/javascript').sendFile(path.join(root, 'pwa-sw.js'));
+});
+
 // Раздаём только необходимые публичные каталоги, а не весь /site целиком.
 app.use("/site/css", express.static(path.join(root, "site", "css"), publicStatic));
 app.use("/site/img", express.static(path.join(root, "site", "img"), publicStatic));
